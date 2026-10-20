@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KR Test</title>
+<style>
+body{background:#111;color:#fff;font-family:sans-serif;padding:20px}
+button{display:block;width:100%;padding:16px;margin:12px 0;font-size:18px;border:0;border-radius:10px;background:#6c3df5;color:#fff}
+</style>
+</head>
+<body>
+<h2>KR Reminder Test</h2>
+<button onclick="perm()">1. Permission do</button>
+<button onclick="remind()">2. 1 minute baad reminder</button>
+<p id="s">Status: abhi kuch nahi hua</p>
+<script>
+var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+function say(t){document.getElementById("s").textContent="Status: "+t;}
+async function perm(){
+  if(!LN){say("Plugin nahi mila");return;}
+  try{var r=await LN.requestPermissions();say("Permission: "+r.display);}
+  catch(e){say("Error: "+e.message);}
+}
+async function remind(){
+  if(!LN){say("Plugin nahi mila");return;}
+  try{
+    await LN.schedule({notifications:[{
+      id:1,
+      title:"KR Creator Studio",
+      body:"Time to work on your YouTube Short!",
+      schedule:{at:new Date(Date.now()+60000)}
+    }]});
+    say("Reminder set. App band karke 1 minute ruko.");
+  }catch(e){say("Error: "+e.message);}
+}
+</script>
+</body>
+</html>
