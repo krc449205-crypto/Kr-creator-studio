@@ -456,6 +456,8 @@ function drawDash(){
 
 /* ---------- reminders ---------- */
 var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
+var CH = 'krremind2';
+if(LN){ LN.createChannel({id:CH, name:'KR Reminders', importance:5, visibility:1, vibration:true}).catch(function(){}); }
 function say(t){ $('status').textContent = 'Status: ' + t; }
 function drawRem(){
   var l = $('list'); l.innerHTML = '';
@@ -492,7 +494,7 @@ $('set').onclick = async function(){
   var id = Math.floor(Date.now() % 2000000000);
   try{
     await LN.schedule({notifications:[{
-      id:id, title:'KR Creator Studio', body:title,
+      id:id, title:'KR Creator Studio', body:title, channelId:CH,
       schedule:{at:t, allowWhileIdle:true}
     }]});
     var a = load('rem'); a.push({id:id, title:title, time:t.getTime()}); save('rem', a);
