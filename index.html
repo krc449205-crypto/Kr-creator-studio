@@ -1,39 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KR Test</title>
+<title>KR Reminder</title>
 <style>
-body{background:#111;color:#fff;font-family:sans-serif;padding:20px}
-button{display:block;width:100%;padding:16px;margin:12px 0;font-size:18px;border:0;border-radius:10px;background:#6c3df5;color:#fff}
+  body{background:#111;color:#fff;font-family:sans-serif;padding:20px}
+  h2{margin-top:0}
+  input,button{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:10px;border:none;font-size:16px}
+  input{background:#222;color:#fff}
+  button{background:#6c3cf7;color:#fff}
+  .item{background:#1c1c1c;padding:10px;border-radius:10px;margin:6px 0}
+  .del{background:#a33;padding:8px;width:auto;margin:6px 0 0 0}
+  #status{margin:10px 0;color:#9f9}
 </style>
 </head>
 <body>
-<h2>KR Reminder Test</h2>
-<button onclick="perm()">1. Permission do</button>
-<button onclick="remind()">2. 1 minute baad reminder</button>
-<p id="s">Status: abhi kuch nahi hua</p>
+<h2>KR Reminder</h2>
+<button id="perm">1. Permission do</button>
+<input id="title" placeholder="Reminder ka title (jaise Video upload karo)">
+<input id="when" type="datetime-local">
+<button id="set">2. Reminder set karo</button>
+<div id="status">Status: abhi kuch nahi hua</div>
+<h3>Set kiye hue reminders</h3>
+<div id="list"></div>
+
 <script>
 var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
-function say(t){document.getElementById("s").textContent="Status: "+t;}
-async function perm(){
-  if(!LN){say("Plugin nahi mila");return;}
-  try{var r=await LN.requestPermissions();say("Permission: "+r.display);}
-  catch(e){say("Error: "+e.message);}
+var st = document.getElementById('status');
+function say(t){ st.textContent = 'Status: ' + t; }
+
+function load(){ try{ return JSON.parse(localStorage.getItem('rem')||'[]'); }catch(e){ return []; } }
+function save(a){ localStorage.setItem('rem', JSON.stringify(a)); }
+
+function draw(){
+  var l = document.getElementById('list');
+  l.innerHTML = '';
+  var a = load();
+  if(!a.length){ l.textContent = 'Koi reminder nahi'; return; }
+  a.forEach(function(r){
+    var d = document.createElement('div');
+    d.className = 'item';
+    d.textContent = r.title + ' - ' + new Date(r.time).toLocaleString();
+    var b = document.createElement('button');
+    b.className = 'del';
+    b.textContent = 'Delete';
+    b.onclick = function(){ del(r.id); };
+    d.appendChild(b);
+    l.appendChild(d);
+  });
 }
-async function remind(){
-  if(!LN){say("Plugin nahi mila");return;}
+
+async function del(id){
+  try{
+    if(LN) await LN.cancel({notifications:[{id:id}]});
+    save(load().filter(function(r){ return r.id !== id; }));
+    draw();
+    say('reminder delete ho gaya');
+  }catch(e){ say('delete error: ' + e.message); }
+}
+
+document.getElementById('perm').onclick = async function(){
+  if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
+  try{
+    var r = await LN.requestPermissions();
+    say('permission: ' + r.display);
+  }catch(e){ say('permission error: ' + e.message); }
+};
+
+document.getElementById('set').onclick = async function(){
+  if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
+  var title = document.getElementById('title').value.trim();
+  var w = document.getElementById('when').value;
+  if(!title){ say('pehle title likho'); return; }
+  if(!w){ say('pehle date aur time chuno'); return; }
+  var t = new Date(w);
+  if(t.getTime() <= Date.now()){ say('time aage ka chuno'); return; }
+  var id = Math.floor(Date.now() % 2000000000);
   try{
     await LN.schedule({notifications:[{
-      id:1,
-      title:"KR Creator Studio",
-      body:"Time to work on your YouTube Short!",
-      schedule:{at:new Date(Date.now()+60000)}
+      id:id, title:'KR Creator Studio', body:title,
+      schedule:{at:t, allowWhileIdle:true}
     }]});
-    say("Reminder set. App band karke 1 minute ruko.");
-  }catch(e){say("Error: "+e.message);}
-}
+    var a = load(); a.push({id:id, title:title, time:t.getTime()}); save(a);
+    draw();
+    say('reminder set ho gaya: ' + t.toLocaleString());
+  }catch(e){ say('set error: ' + e.message); }
+};
+
+draw();
 </script>
 </body>
 </html>
