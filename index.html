@@ -22,9 +22,10 @@
   .bar{height:12px;background:#333;border-radius:6px;overflow:hidden;margin-top:8px}
   .fill{height:100%;background:#6c3cf7;width:0}
   .nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#000;border-top:1px solid #333}
-  .nav button{flex:1;border-radius:0;margin:0;background:#000;color:#aaa;padding:16px 4px}
+  .nav button{flex:1;border-radius:0;margin:0;background:#000;color:#aaa;padding:14px 2px;font-size:12px}
   .nav button.on{color:#fff;background:#222}
   .st{margin:10px 0;color:#9f9}
+  .sub{color:#aaa;font-size:14px}
 </style>
 </head>
 <body>
@@ -37,6 +38,8 @@
   </div>
   <div class="card">Kul goals: <b id="d3">0</b></div>
   <div class="card">Kul pure hue: <b id="d4">0</b></div>
+  <div class="card">Latest subscribers: <b id="d5">-</b></div>
+  <div class="card">Kul likes: <b id="d6">0</b></div>
 </div>
 
 <div id="t-goals" class="tab">
@@ -46,6 +49,25 @@
   <button id="gadd">Goal add karo</button>
   <div id="gst" class="st"></div>
   <div id="glist"></div>
+</div>
+
+<div id="t-subs" class="tab">
+  <h2>Subscribers</h2>
+  <input id="sdate" type="date">
+  <input id="scount" type="number" inputmode="numeric" placeholder="Aaj subscribers kitne hain">
+  <button id="sadd">Save karo</button>
+  <div id="sst" class="st"></div>
+  <div id="slist"></div>
+</div>
+
+<div id="t-likes" class="tab">
+  <h2>Likes</h2>
+  <input id="ldate" type="date">
+  <input id="lname" placeholder="Video/post ka naam">
+  <input id="lcount" type="number" inputmode="numeric" placeholder="Likes kitne hain">
+  <button id="ladd">Save karo</button>
+  <div id="lst" class="st"></div>
+  <div id="llist"></div>
 </div>
 
 <div id="t-rem" class="tab">
@@ -62,41 +84,43 @@
 <div class="nav">
   <button id="n-dash" class="on">Dashboard</button>
   <button id="n-goals">Goals</button>
-  <button id="n-rem">Reminders</button>
+  <button id="n-subs">Subs</button>
+  <button id="n-likes">Likes</button>
+  <button id="n-rem">Reminder</button>
 </div>
 
 <script>
 function $(i){ return document.getElementById(i); }
 function pad(n){ return n < 10 ? '0' + n : '' + n; }
 function today(){ var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function load(k){ try{ return JSON.parse(localStorage.getItem(k) || '[]'); }catch(e){ return []; } }
+function save(k,a){ localStorage.setItem(k, JSON.stringify(a)); }
 
 /* ---------- tabs ---------- */
+var NAMES = ['dash','goals','subs','likes','rem'];
 function show(name){
-  ['dash','goals','rem'].forEach(function(n){
+  NAMES.forEach(function(n){
     $('t-' + n).className = 'tab' + (n === name ? ' on' : '');
     $('n-' + n).className = (n === name ? 'on' : '');
   });
   if(name === 'dash') drawDash();
   if(name === 'goals') drawGoals();
+  if(name === 'subs') drawSubs();
+  if(name === 'likes') drawLikes();
+  if(name === 'rem') drawRem();
 }
-$('n-dash').onclick = function(){ show('dash'); };
-$('n-goals').onclick = function(){ show('goals'); };
-$('n-rem').onclick = function(){ show('rem'); };
+NAMES.forEach(function(n){ $('n-' + n).onclick = function(){ show(n); }; });
 
 /* ---------- goals ---------- */
 var editingId = null;
-function gload(){ try{ return JSON.parse(localStorage.getItem('goals') || '[]'); }catch(e){ return []; } }
-function gsave(a){ localStorage.setItem('goals', JSON.stringify(a)); }
-
 $('gdate').value = today();
 $('gdate').onchange = function(){ editingId = null; $('gadd').textContent = 'Goal add karo'; $('gtitle').value = ''; drawGoals(); };
 
 function drawGoals(){
   var date = $('gdate').value;
-  var l = $('glist');
-  l.innerHTML = '';
+  var l = $('glist'); l.innerHTML = '';
   if(!date){ l.textContent = 'Pehle date chuno'; return; }
-  var a = gload().filter(function(g){ return g.date === date; });
+  var a = load('goals').filter(function(g){ return g.date === date; });
   if(!a.length){ l.textContent = 'Is date pe koi goal nahi'; return; }
   a.forEach(function(g){
     var c = document.createElement('div'); c.className = 'card';
@@ -104,7 +128,7 @@ function drawGoals(){
     var cb = document.createElement('input');
     cb.type = 'checkbox'; cb.checked = g.done;
     cb.style.cssText = 'width:24px;height:24px;margin:0';
-    cb.onchange = function(){ toggle(g.id); };
+    cb.onchange = function(){ toggleGoal(g.id); };
     var t = document.createElement('div');
     t.className = 'grow' + (g.done ? ' done' : '');
     t.textContent = g.title;
@@ -116,42 +140,104 @@ function drawGoals(){
     c.appendChild(r); l.appendChild(c);
   });
 }
-
-function toggle(id){
-  var a = gload();
+function toggleGoal(id){
+  var a = load('goals');
   a.forEach(function(g){ if(g.id === id) g.done = !g.done; });
-  gsave(a); drawGoals();
+  save('goals', a); drawGoals();
 }
 function delGoal(id){
-  gsave(gload().filter(function(g){ return g.id !== id; }));
+  save('goals', load('goals').filter(function(g){ return g.id !== id; }));
   if(editingId === id){ editingId = null; $('gtitle').value = ''; $('gadd').textContent = 'Goal add karo'; }
-  drawGoals();
-  $('gst').textContent = 'Goal delete ho gaya';
+  drawGoals(); $('gst').textContent = 'Goal delete ho gaya';
 }
-
 $('gadd').onclick = function(){
   var title = $('gtitle').value.trim();
   var date = $('gdate').value;
   if(!date){ $('gst').textContent = 'Pehle date chuno'; return; }
   if(!title){ $('gst').textContent = 'Pehle goal likho'; return; }
-  var a = gload();
+  var a = load('goals');
   if(editingId !== null){
     a.forEach(function(g){ if(g.id === editingId) g.title = title; });
-    editingId = null;
-    $('gadd').textContent = 'Goal add karo';
+    editingId = null; $('gadd').textContent = 'Goal add karo';
     $('gst').textContent = 'Goal badal gaya';
   } else {
     a.push({id: Date.now() + Math.floor(Math.random()*1000), title: title, date: date, done: false});
     $('gst').textContent = 'Goal add ho gaya';
   }
-  gsave(a);
-  $('gtitle').value = '';
-  drawGoals();
+  save('goals', a); $('gtitle').value = ''; drawGoals();
+};
+
+/* ---------- subscribers ---------- */
+$('sdate').value = today();
+function drawSubs(){
+  var l = $('slist'); l.innerHTML = '';
+  var a = load('subs').sort(function(x,y){ return x.date < y.date ? 1 : -1; });
+  if(!a.length){ l.textContent = 'Abhi koi entry nahi'; return; }
+  a.forEach(function(s, i){
+    var c = document.createElement('div'); c.className = 'card';
+    var change = '';
+    if(a[i+1]){ var diff = s.count - a[i+1].count; change = ' (' + (diff >= 0 ? '+' : '') + diff + ')'; }
+    var t = document.createElement('div');
+    t.textContent = s.date + ': ' + s.count + change;
+    var b = document.createElement('button'); b.className = 'del'; b.textContent = 'Delete';
+    b.onclick = function(){ delSub(s.id); };
+    c.appendChild(t); c.appendChild(b); l.appendChild(c);
+  });
+}
+function delSub(id){
+  save('subs', load('subs').filter(function(s){ return s.id !== id; }));
+  drawSubs(); $('sst').textContent = 'Entry delete ho gayi';
+}
+$('sadd').onclick = function(){
+  var date = $('sdate').value;
+  var n = parseInt($('scount').value, 10);
+  if(!date){ $('sst').textContent = 'Pehle date chuno'; return; }
+  if(isNaN(n) || n < 0){ $('sst').textContent = 'Sahi number likho'; return; }
+  var a = load('subs').filter(function(s){ return s.date !== date; });
+  a.push({id: Date.now() + Math.floor(Math.random()*1000), date: date, count: n});
+  save('subs', a); $('scount').value = '';
+  $('sst').textContent = 'Save ho gaya: ' + date + ' ko ' + n;
+  drawSubs();
+};
+
+/* ---------- likes ---------- */
+$('ldate').value = today();
+function drawLikes(){
+  var l = $('llist'); l.innerHTML = '';
+  var a = load('likes').sort(function(x,y){ return x.date < y.date ? 1 : -1; });
+  var total = 0;
+  a.forEach(function(x){ total += x.count; });
+  $('lst').textContent = 'Kul likes: ' + total;
+  if(!a.length){ l.textContent = 'Abhi koi entry nahi'; return; }
+  a.forEach(function(x){
+    var c = document.createElement('div'); c.className = 'card';
+    var t = document.createElement('div');
+    t.textContent = x.date + ' - ' + x.name + ': ' + x.count + ' likes';
+    var b = document.createElement('button'); b.className = 'del'; b.textContent = 'Delete';
+    b.onclick = function(){ delLike(x.id); };
+    c.appendChild(t); c.appendChild(b); l.appendChild(c);
+  });
+}
+function delLike(id){
+  save('likes', load('likes').filter(function(x){ return x.id !== id; }));
+  drawLikes();
+}
+$('ladd').onclick = function(){
+  var date = $('ldate').value;
+  var name = $('lname').value.trim();
+  var n = parseInt($('lcount').value, 10);
+  if(!date){ $('lst').textContent = 'Pehle date chuno'; return; }
+  if(!name){ $('lst').textContent = 'Video/post ka naam likho'; return; }
+  if(isNaN(n) || n < 0){ $('lst').textContent = 'Sahi number likho'; return; }
+  var a = load('likes');
+  a.push({id: Date.now() + Math.floor(Math.random()*1000), date: date, name: name, count: n});
+  save('likes', a); $('lname').value = ''; $('lcount').value = '';
+  drawLikes();
 };
 
 /* ---------- dashboard ---------- */
 function drawDash(){
-  var a = gload();
+  var a = load('goals');
   var td = a.filter(function(g){ return g.date === today(); });
   var tdDone = td.filter(function(g){ return g.done; }).length;
   $('d1').textContent = td.length;
@@ -159,17 +245,20 @@ function drawDash(){
   $('d3').textContent = a.length;
   $('d4').textContent = a.filter(function(g){ return g.done; }).length;
   $('dfill').style.width = (td.length ? Math.round(tdDone * 100 / td.length) : 0) + '%';
+  var s = load('subs').sort(function(x,y){ return x.date < y.date ? 1 : -1; });
+  $('d5').textContent = s.length ? s[0].count : '-';
+  var total = 0;
+  load('likes').forEach(function(x){ total += x.count; });
+  $('d6').textContent = total;
 }
 
 /* ---------- reminders ---------- */
 var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
 function say(t){ $('status').textContent = 'Status: ' + t; }
-function rload(){ try{ return JSON.parse(localStorage.getItem('rem') || '[]'); }catch(e){ return []; } }
-function rsave(a){ localStorage.setItem('rem', JSON.stringify(a)); }
 
 function drawRem(){
   var l = $('list'); l.innerHTML = '';
-  var a = rload();
+  var a = load('rem');
   if(!a.length){ l.textContent = 'Koi reminder nahi'; return; }
   a.forEach(function(r){
     var d = document.createElement('div'); d.className = 'card';
@@ -179,21 +268,18 @@ function drawRem(){
     d.appendChild(b); l.appendChild(d);
   });
 }
-
 async function delRem(id){
   try{
     if(LN) await LN.cancel({notifications:[{id:id}]});
-    rsave(rload().filter(function(r){ return r.id !== id; }));
+    save('rem', load('rem').filter(function(r){ return r.id !== id; }));
     drawRem(); say('reminder delete ho gaya');
   }catch(e){ say('delete error: ' + e.message); }
 }
-
 $('perm').onclick = async function(){
   if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
   try{ var r = await LN.requestPermissions(); say('permission: ' + r.display); }
   catch(e){ say('permission error: ' + e.message); }
 };
-
 $('set').onclick = async function(){
   if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
   var title = $('title').value.trim();
@@ -208,14 +294,13 @@ $('set').onclick = async function(){
       id:id, title:'KR Creator Studio', body:title,
       schedule:{at:t, allowWhileIdle:true}
     }]});
-    var a = rload(); a.push({id:id, title:title, time:t.getTime()}); rsave(a);
+    var a = load('rem'); a.push({id:id, title:title, time:t.getTime()}); save('rem', a);
     drawRem(); say('reminder set ho gaya: ' + t.toLocaleString());
   }catch(e){ say('set error: ' + e.message); }
 };
 
 drawDash();
 drawGoals();
-drawRem();
 </script>
 </body>
 </html>
