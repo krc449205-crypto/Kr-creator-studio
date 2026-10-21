@@ -32,7 +32,7 @@
 <body>
 
 <div id="t-dash" class="tab on">
-  <h2>Dashboard</h2>
+  <h2 id="hi">Dashboard</h2>
   <div class="card">Aaj ke goals: <b id="d1">0</b></div>
   <div class="card">Aaj ke pure hue: <b id="d2">0</b>
     <div class="bar"><div id="dfill" class="fill"></div></div>
@@ -101,6 +101,17 @@
 <div id="t-more" class="tab">
   <h2>More</h2>
 
+  <h3>Settings</h3>
+  <input id="cname" placeholder="Aapka naam (Dashboard pe dikhega)">
+  <select id="cstart">
+    <option value="dash">App Dashboard se khule</option>
+    <option value="goals">App Goals se khule</option>
+    <option value="plan">App Plan se khule</option>
+    <option value="routine">App Routine se khule</option>
+  </select>
+  <button id="sset">Settings save karo</button>
+  <div id="sett" class="st"></div>
+
   <h3>Reminders</h3>
   <button id="perm">1. Permission do</button>
   <input id="title" placeholder="Reminder ka title">
@@ -140,6 +151,7 @@ function fmt(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(
 function today(){ return fmt(new Date()); }
 function load(k){ try{ return JSON.parse(localStorage.getItem(k) || '[]'); }catch(e){ return []; } }
 function save(k,a){ localStorage.setItem(k, JSON.stringify(a)); }
+function loadSet(){ try{ return JSON.parse(localStorage.getItem('settings') || '{}'); }catch(e){ return {}; } }
 var KEYS = ['goals','subs','likes','plan','rem','routine','rlog'];
 var NAMES = ['dash','goals','subs','likes','plan','routine','more'];
 
@@ -155,9 +167,28 @@ function show(name){
   if(name === 'likes') drawLikes();
   if(name === 'plan') drawPlan();
   if(name === 'routine') drawRoutine();
-  if(name === 'more'){ drawRem(); drawAch(); }
+  if(name === 'more'){ drawSettings(); drawRem(); drawAch(); }
 }
 NAMES.forEach(function(n){ $('n-' + n).onclick = function(){ show(n); }; });
+
+/* ---------- settings ---------- */
+function drawSettings(){
+  var s = loadSet();
+  $('cname').value = s.name || '';
+  $('cstart').value = s.start || 'dash';
+}
+function applySettings(){
+  var s = loadSet();
+  $('hi').textContent = s.name ? 'Namaste, ' + s.name : 'Dashboard';
+}
+$('sset').onclick = function(){
+  var s = loadSet();
+  s.name = $('cname').value.trim();
+  s.start = $('cstart').value;
+  localStorage.setItem('settings', JSON.stringify(s));
+  applySettings();
+  $('sett').textContent = 'Settings save ho gayi';
+};
 
 /* ---------- goals ---------- */
 var editingId = null;
@@ -383,6 +414,7 @@ $('radd').onclick = function(){
 };
 
 /* ---------- achievements ---------- */
+function likesTotalSafe(){ return likesTotal(); }
 function achList(){
   var goals = load('goals');
   var doneG = goals.filter(function(g){ return g.done; }).length;
@@ -417,6 +449,7 @@ function drawAch(){
 $('expb').onclick = function(){
   var o = {};
   KEYS.forEach(function(k){ o[k] = load(k); });
+  o.settings = loadSet();
   $('exp').value = JSON.stringify(o);
   $('ist').textContent = 'Export ho gaya. Text copy karke safe jagah save karo.';
 };
@@ -425,15 +458,17 @@ $('impb').onclick = function(){
   try{ o = JSON.parse($('exp').value); }catch(e){ $('ist').textContent = 'Galat text hai, sahi export paste karo'; return; }
   if(!o || typeof o !== 'object'){ $('ist').textContent = 'Galat text hai'; return; }
   KEYS.forEach(function(k){ if(Array.isArray(o[k])) save(k, o[k]); });
+  if(o.settings && typeof o.settings === 'object') localStorage.setItem('settings', JSON.stringify(o.settings));
   $('ist').textContent = 'Import ho gaya';
-  drawDash(); drawRem(); drawAch();
+  applySettings(); drawDash(); drawSettings(); drawRem(); drawAch();
 };
 $('rbtn').onclick = function(){
   if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
   KEYS.forEach(function(k){ localStorage.removeItem(k); });
+  localStorage.removeItem('settings');
   $('rtxt').value = '';
   $('ist').textContent = 'Sab data delete ho gaya';
-  drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawRem(); drawAch();
+  applySettings(); drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawSettings(); drawRem(); drawAch();
 };
 
 /* ---------- dashboard ---------- */
@@ -502,8 +537,10 @@ $('set').onclick = async function(){
   }catch(e){ say('set error: ' + e.message); }
 };
 
-drawDash();
-drawGoals();
+/* ---------- start ---------- */
+applySettings();
+var st0 = loadSet().start || 'dash';
+show(st0);
 </script>
 </body>
-    </html>
+  </html>
