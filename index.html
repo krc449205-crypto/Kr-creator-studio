@@ -7,8 +7,10 @@
 <style>
   body{background:#111;color:#fff;font-family:sans-serif;margin:0;padding:16px 16px 90px}
   h2{margin:0 0 12px}
-  input,button,select{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:10px;border:none;font-size:16px}
-  input,select{background:#222;color:#fff}
+  h3{margin:18px 0 6px}
+  input,button,select,textarea{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:10px;border:none;font-size:16px}
+  input,select,textarea{background:#222;color:#fff}
+  textarea{height:110px;font-size:13px}
   button{background:#6c3cf7;color:#fff}
   .tab{display:none}
   .tab.on{display:block}
@@ -22,10 +24,9 @@
   .bar{height:12px;background:#333;border-radius:6px;overflow:hidden;margin-top:8px}
   .fill{height:100%;background:#6c3cf7;width:0}
   .nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#000;border-top:1px solid #333}
-  .nav button{flex:1;border-radius:0;margin:0;background:#000;color:#aaa;padding:14px 0;font-size:11px}
+  .nav button{flex:1;border-radius:0;margin:0;background:#000;color:#aaa;padding:14px 0;font-size:10px}
   .nav button.on{color:#fff;background:#222}
   .st{margin:10px 0;color:#9f9}
-  .sub{color:#aaa;font-size:14px}
 </style>
 </head>
 <body>
@@ -41,6 +42,8 @@
   <div class="card">Latest subscribers: <b id="d5">-</b></div>
   <div class="card">Kul likes: <b id="d6">0</b></div>
   <div class="card">Aaj ka plan: <b id="d7">0</b></div>
+  <div class="card">Routine streak: <b id="d8">0</b> din</div>
+  <div class="card">Achievements: <b id="d9">0</b></div>
 </div>
 
 <div id="t-goals" class="tab">
@@ -86,15 +89,38 @@
   <div id="plist"></div>
 </div>
 
-<div id="t-rem" class="tab">
-  <h2>Reminders</h2>
+<div id="t-routine" class="tab">
+  <h2>Routine</h2>
+  <div id="rstreak" class="st"></div>
+  <input id="rname" placeholder="Routine kaam (jaise Script likho)">
+  <button id="radd">Routine add karo</button>
+  <div id="rst" class="st"></div>
+  <div id="rlist"></div>
+</div>
+
+<div id="t-more" class="tab">
+  <h2>More</h2>
+
+  <h3>Reminders</h3>
   <button id="perm">1. Permission do</button>
   <input id="title" placeholder="Reminder ka title">
   <input id="when" type="datetime-local">
   <button id="set">2. Reminder set karo</button>
   <div id="status" class="st">Status: abhi kuch nahi hua</div>
-  <h3>Set kiye hue reminders</h3>
   <div id="list"></div>
+
+  <h3>Achievements</h3>
+  <div id="ach"></div>
+
+  <h3>Backup (export / import)</h3>
+  <button id="expb">Export banao</button>
+  <textarea id="exp" placeholder="Export yahan dikhega. Copy karke safe jagah save karo."></textarea>
+  <button id="impb">Import karo (upar wala text paste karke)</button>
+  <div id="ist" class="st"></div>
+
+  <h3>Reset</h3>
+  <input id="rtxt" placeholder="Sab data delete karne ke liye RESET likho">
+  <button id="rbtn" class="del">Sab data delete karo</button>
 </div>
 
 <div class="nav">
@@ -103,18 +129,21 @@
   <button id="n-subs">Subs</button>
   <button id="n-likes">Likes</button>
   <button id="n-plan">Plan</button>
-  <button id="n-rem">Reminder</button>
+  <button id="n-routine">Routine</button>
+  <button id="n-more">More</button>
 </div>
 
 <script>
 function $(i){ return document.getElementById(i); }
 function pad(n){ return n < 10 ? '0' + n : '' + n; }
-function today(){ var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function fmt(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function today(){ return fmt(new Date()); }
 function load(k){ try{ return JSON.parse(localStorage.getItem(k) || '[]'); }catch(e){ return []; } }
 function save(k,a){ localStorage.setItem(k, JSON.stringify(a)); }
+var KEYS = ['goals','subs','likes','plan','rem','routine','rlog'];
+var NAMES = ['dash','goals','subs','likes','plan','routine','more'];
 
 /* ---------- tabs ---------- */
-var NAMES = ['dash','goals','subs','likes','plan','rem'];
 function show(name){
   NAMES.forEach(function(n){
     $('t-' + n).className = 'tab' + (n === name ? ' on' : '');
@@ -125,7 +154,8 @@ function show(name){
   if(name === 'subs') drawSubs();
   if(name === 'likes') drawLikes();
   if(name === 'plan') drawPlan();
-  if(name === 'rem') drawRem();
+  if(name === 'routine') drawRoutine();
+  if(name === 'more'){ drawRem(); drawAch(); }
 }
 NAMES.forEach(function(n){ $('n-' + n).onclick = function(){ show(n); }; });
 
@@ -220,12 +250,11 @@ $('sadd').onclick = function(){
 
 /* ---------- likes ---------- */
 $('ldate').value = today();
+function likesTotal(){ var t = 0; load('likes').forEach(function(x){ t += x.count; }); return t; }
 function drawLikes(){
   var l = $('llist'); l.innerHTML = '';
   var a = load('likes').sort(function(x,y){ return x.date < y.date ? 1 : -1; });
-  var total = 0;
-  a.forEach(function(x){ total += x.count; });
-  $('lst').textContent = 'Kul likes: ' + total;
+  $('lst').textContent = 'Kul likes: ' + likesTotal();
   if(!a.length){ l.textContent = 'Abhi koi entry nahi'; return; }
   a.forEach(function(x){
     var c = document.createElement('div'); c.className = 'card';
@@ -299,6 +328,114 @@ $('padd').onclick = function(){
   drawPlan();
 };
 
+/* ---------- routine + streak ---------- */
+function streak(){
+  var set = {};
+  load('rlog').forEach(function(x){ set[x.date] = true; });
+  var d = new Date();
+  if(!set[fmt(d)]) d.setDate(d.getDate() - 1);
+  var n = 0;
+  while(set[fmt(d)]){ n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function drawRoutine(){
+  var l = $('rlist'); l.innerHTML = '';
+  var items = load('routine');
+  var logs = load('rlog');
+  var t = today();
+  $('rstreak').textContent = 'Streak: ' + streak() + ' din (aaj ka kaam tick karo)';
+  if(!items.length){ l.textContent = 'Abhi koi routine kaam nahi'; return; }
+  items.forEach(function(r){
+    var c = document.createElement('div'); c.className = 'card';
+    var row = document.createElement('div'); row.className = 'row';
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.style.cssText = 'width:24px;height:24px;margin:0';
+    cb.checked = logs.some(function(x){ return x.date === t && x.rid === r.id; });
+    cb.onchange = function(){ toggleRoutine(r.id); };
+    var nm = document.createElement('div'); nm.className = 'grow'; nm.textContent = r.name;
+    var d = document.createElement('button'); d.className = 'del'; d.textContent = 'Delete';
+    d.onclick = function(){ delRoutine(r.id); };
+    row.appendChild(cb); row.appendChild(nm); row.appendChild(d);
+    c.appendChild(row); l.appendChild(c);
+  });
+}
+function toggleRoutine(rid){
+  var logs = load('rlog');
+  var t = today();
+  var idx = -1;
+  logs.forEach(function(x, i){ if(x.date === t && x.rid === rid) idx = i; });
+  if(idx >= 0) logs.splice(idx, 1); else logs.push({date: t, rid: rid});
+  save('rlog', logs); drawRoutine();
+}
+function delRoutine(id){
+  save('routine', load('routine').filter(function(r){ return r.id !== id; }));
+  drawRoutine(); $('rst').textContent = 'Routine kaam delete ho gaya';
+}
+$('radd').onclick = function(){
+  var name = $('rname').value.trim();
+  if(!name){ $('rst').textContent = 'Pehle kaam ka naam likho'; return; }
+  var a = load('routine');
+  a.push({id: Date.now() + Math.floor(Math.random()*1000), name: name});
+  save('routine', a); $('rname').value = '';
+  $('rst').textContent = 'Routine add ho gaya';
+  drawRoutine();
+};
+
+/* ---------- achievements ---------- */
+function achList(){
+  var goals = load('goals');
+  var doneG = goals.filter(function(g){ return g.done; }).length;
+  var s = streak();
+  var planN = load('plan').length;
+  var likes = likesTotal();
+  return [
+    {name: 'Pehla goal pura kiya', ok: doneG >= 1},
+    {name: '10 goals pure kiye', ok: doneG >= 10},
+    {name: '3 din ki streak', ok: s >= 3},
+    {name: '7 din ki streak', ok: s >= 7},
+    {name: 'Plan mein 5 content ideas', ok: planN >= 5},
+    {name: '100 likes total', ok: likes >= 100},
+    {name: '1000 likes total', ok: likes >= 1000}
+  ];
+}
+function drawAch(){
+  var list = achList();
+  var got = list.filter(function(a){ return a.ok; }).length;
+  var box = $('ach'); box.innerHTML = '';
+  var head = document.createElement('div'); head.className = 'st';
+  head.textContent = got + ' / ' + list.length + ' khule';
+  box.appendChild(head);
+  list.forEach(function(a){
+    var c = document.createElement('div'); c.className = 'card';
+    c.textContent = (a.ok ? '✅ ' : '🔒 ') + a.name;
+    box.appendChild(c);
+  });
+}
+
+/* ---------- backup ---------- */
+$('expb').onclick = function(){
+  var o = {};
+  KEYS.forEach(function(k){ o[k] = load(k); });
+  $('exp').value = JSON.stringify(o);
+  $('ist').textContent = 'Export ho gaya. Text copy karke safe jagah save karo.';
+};
+$('impb').onclick = function(){
+  var o;
+  try{ o = JSON.parse($('exp').value); }catch(e){ $('ist').textContent = 'Galat text hai, sahi export paste karo'; return; }
+  if(!o || typeof o !== 'object'){ $('ist').textContent = 'Galat text hai'; return; }
+  KEYS.forEach(function(k){ if(Array.isArray(o[k])) save(k, o[k]); });
+  $('ist').textContent = 'Import ho gaya';
+  drawDash(); drawRem(); drawAch();
+};
+$('rbtn').onclick = function(){
+  if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
+  KEYS.forEach(function(k){ localStorage.removeItem(k); });
+  $('rtxt').value = '';
+  $('ist').textContent = 'Sab data delete ho gaya';
+  drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawRem(); drawAch();
+};
+
 /* ---------- dashboard ---------- */
 function drawDash(){
   var a = load('goals');
@@ -311,16 +448,15 @@ function drawDash(){
   $('dfill').style.width = (td.length ? Math.round(tdDone * 100 / td.length) : 0) + '%';
   var s = load('subs').sort(function(x,y){ return x.date < y.date ? 1 : -1; });
   $('d5').textContent = s.length ? s[0].count : '-';
-  var total = 0;
-  load('likes').forEach(function(x){ total += x.count; });
-  $('d6').textContent = total;
+  $('d6').textContent = likesTotal();
   $('d7').textContent = load('plan').filter(function(p){ return p.date === today(); }).length;
+  $('d8').textContent = streak();
+  $('d9').textContent = achList().filter(function(x){ return x.ok; }).length;
 }
 
 /* ---------- reminders ---------- */
 var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
 function say(t){ $('status').textContent = 'Status: ' + t; }
-
 function drawRem(){
   var l = $('list'); l.innerHTML = '';
   var a = load('rem');
@@ -342,7 +478,7 @@ async function delRem(id){
 }
 $('perm').onclick = async function(){
   if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
-  try{ var r = await LN.requestPermissions(); say('permission: ' + r.display); }
+  try{ var pr = await LN.requestPermissions(); say('permission: ' + pr.display); }
   catch(e){ say('permission error: ' + e.message); }
 };
 $('set').onclick = async function(){
@@ -368,4 +504,4 @@ drawDash();
 drawGoals();
 </script>
 </body>
-</html>
+    </html>
