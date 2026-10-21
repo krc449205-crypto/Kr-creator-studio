@@ -7,8 +7,8 @@
 <style>
   body{background:#111;color:#fff;font-family:sans-serif;margin:0;padding:16px 16px 90px}
   h2{margin:0 0 12px}
-  input,button{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:10px;border:none;font-size:16px}
-  input{background:#222;color:#fff}
+  input,button,select{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:10px;border:none;font-size:16px}
+  input,select{background:#222;color:#fff}
   button{background:#6c3cf7;color:#fff}
   .tab{display:none}
   .tab.on{display:block}
@@ -22,7 +22,7 @@
   .bar{height:12px;background:#333;border-radius:6px;overflow:hidden;margin-top:8px}
   .fill{height:100%;background:#6c3cf7;width:0}
   .nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#000;border-top:1px solid #333}
-  .nav button{flex:1;border-radius:0;margin:0;background:#000;color:#aaa;padding:14px 2px;font-size:12px}
+  .nav button{flex:1;border-radius:0;margin:0;background:#000;color:#aaa;padding:14px 0;font-size:11px}
   .nav button.on{color:#fff;background:#222}
   .st{margin:10px 0;color:#9f9}
   .sub{color:#aaa;font-size:14px}
@@ -40,6 +40,7 @@
   <div class="card">Kul pure hue: <b id="d4">0</b></div>
   <div class="card">Latest subscribers: <b id="d5">-</b></div>
   <div class="card">Kul likes: <b id="d6">0</b></div>
+  <div class="card">Aaj ka plan: <b id="d7">0</b></div>
 </div>
 
 <div id="t-goals" class="tab">
@@ -70,6 +71,21 @@
   <div id="llist"></div>
 </div>
 
+<div id="t-plan" class="tab">
+  <h2>Content Plan</h2>
+  <input id="pdate" type="date">
+  <input id="ptext" placeholder="Content ka idea (jaise Vlog on Sunday)">
+  <select id="pstatus">
+    <option value="Idea">Idea</option>
+    <option value="Shoot">Shoot</option>
+    <option value="Edit">Edit</option>
+    <option value="Upload">Upload</option>
+  </select>
+  <button id="padd">Plan add karo</button>
+  <div id="pst" class="st"></div>
+  <div id="plist"></div>
+</div>
+
 <div id="t-rem" class="tab">
   <h2>Reminders</h2>
   <button id="perm">1. Permission do</button>
@@ -86,6 +102,7 @@
   <button id="n-goals">Goals</button>
   <button id="n-subs">Subs</button>
   <button id="n-likes">Likes</button>
+  <button id="n-plan">Plan</button>
   <button id="n-rem">Reminder</button>
 </div>
 
@@ -97,7 +114,7 @@ function load(k){ try{ return JSON.parse(localStorage.getItem(k) || '[]'); }catc
 function save(k,a){ localStorage.setItem(k, JSON.stringify(a)); }
 
 /* ---------- tabs ---------- */
-var NAMES = ['dash','goals','subs','likes','rem'];
+var NAMES = ['dash','goals','subs','likes','plan','rem'];
 function show(name){
   NAMES.forEach(function(n){
     $('t-' + n).className = 'tab' + (n === name ? ' on' : '');
@@ -107,6 +124,7 @@ function show(name){
   if(name === 'goals') drawGoals();
   if(name === 'subs') drawSubs();
   if(name === 'likes') drawLikes();
+  if(name === 'plan') drawPlan();
   if(name === 'rem') drawRem();
 }
 NAMES.forEach(function(n){ $('n-' + n).onclick = function(){ show(n); }; });
@@ -235,6 +253,52 @@ $('ladd').onclick = function(){
   drawLikes();
 };
 
+/* ---------- content plan ---------- */
+$('pdate').value = today();
+function drawPlan(){
+  var l = $('plist'); l.innerHTML = '';
+  var a = load('plan').sort(function(x,y){ return x.date < y.date ? -1 : 1; });
+  if(!a.length){ l.textContent = 'Abhi koi plan nahi'; return; }
+  a.forEach(function(p){
+    var c = document.createElement('div'); c.className = 'card';
+    var t = document.createElement('div');
+    t.textContent = p.date + ' - ' + p.text;
+    var r = document.createElement('div'); r.className = 'row';
+    var s = document.createElement('select');
+    ['Idea','Shoot','Edit','Upload'].forEach(function(v){
+      var o = document.createElement('option'); o.value = v; o.textContent = v;
+      if(v === p.status) o.selected = true;
+      s.appendChild(o);
+    });
+    s.onchange = function(){ setPlanStatus(p.id, s.value); };
+    var b = document.createElement('button'); b.className = 'del'; b.textContent = 'Delete';
+    b.onclick = function(){ delPlan(p.id); };
+    r.appendChild(s); r.appendChild(b);
+    c.appendChild(t); c.appendChild(r); l.appendChild(c);
+  });
+}
+function setPlanStatus(id, v){
+  var a = load('plan');
+  a.forEach(function(p){ if(p.id === id) p.status = v; });
+  save('plan', a); drawPlan(); $('pst').textContent = 'Status badal gaya';
+}
+function delPlan(id){
+  save('plan', load('plan').filter(function(p){ return p.id !== id; }));
+  drawPlan(); $('pst').textContent = 'Plan delete ho gaya';
+}
+$('padd').onclick = function(){
+  var date = $('pdate').value;
+  var text = $('ptext').value.trim();
+  var status = $('pstatus').value;
+  if(!date){ $('pst').textContent = 'Pehle date chuno'; return; }
+  if(!text){ $('pst').textContent = 'Pehle idea likho'; return; }
+  var a = load('plan');
+  a.push({id: Date.now() + Math.floor(Math.random()*1000), date: date, text: text, status: status});
+  save('plan', a); $('ptext').value = '';
+  $('pst').textContent = 'Plan add ho gaya';
+  drawPlan();
+};
+
 /* ---------- dashboard ---------- */
 function drawDash(){
   var a = load('goals');
@@ -250,6 +314,7 @@ function drawDash(){
   var total = 0;
   load('likes').forEach(function(x){ total += x.count; });
   $('d6').textContent = total;
+  $('d7').textContent = load('plan').filter(function(p){ return p.date === today(); }).length;
 }
 
 /* ---------- reminders ---------- */
