@@ -5,41 +5,45 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>KR Creator Studio</title>
 <style>
-  :root{--gold:#d4af37;--gold2:#f3d77a;--bg:#0b0b0b;--card:#151515;--txt:#f5f0e1;--mut:#9a927a}
+  :root{--c:#22d3ee;--c2:#67e8f9;--bg:#050608;--txt:#eef6ff;--mut:#7d8a99}
   *{-webkit-tap-highlight-color:transparent}
-  body{background:radial-gradient(circle at top,#1a1505 0%,#0b0b0b 55%);color:var(--txt);font-family:sans-serif;margin:0;padding:18px 16px 96px;min-height:100vh}
-  h2{margin:4px 0 14px;font-weight:600;letter-spacing:.5px;color:var(--gold2)}
-  h3{margin:20px 0 8px;color:var(--gold);font-size:15px;letter-spacing:.5px;text-transform:uppercase}
-  input,button,select,textarea{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:12px;font-size:16px;outline:none}
-  input,select,textarea{background:#141414;color:var(--txt);border:1px solid #2a2a2a}
-  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  body{background:radial-gradient(circle at 85% 0%,rgba(34,211,238,.12),transparent 40%),var(--bg);color:var(--txt);font-family:sans-serif;margin:0;padding:20px 16px 100px;min-height:100vh}
+  h2{margin:6px 0 16px;font-weight:700;letter-spacing:.3px;color:var(--txt)}
+  h3{margin:22px 0 8px;color:var(--c);font-size:13px;letter-spacing:1px;text-transform:uppercase}
+  input,button,select,textarea{width:100%;box-sizing:border-box;padding:14px;margin:6px 0;border-radius:14px;font-size:16px;outline:none}
+  input,select,textarea{background:rgba(255,255,255,.04);color:var(--txt);border:1px solid rgba(34,211,238,.18)}
+  input:focus,select:focus,textarea:focus{border-color:var(--c);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
   textarea{height:110px;font-size:13px}
-  button{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111;border:none;font-weight:600;box-shadow:0 4px 14px rgba(212,175,55,.25);transition:transform .08s}
-  button:active{transform:scale(.97)}
+  button{background:linear-gradient(135deg,#0891b2,var(--c));color:#021014;border:none;font-weight:700;box-shadow:0 6px 20px rgba(34,211,238,.25);transition:transform .12s, box-shadow .12s}
+  button:active{transform:scale(.95);box-shadow:0 2px 8px rgba(34,211,238,.2)}
   .tab{display:none}
-  .tab.on{display:block}
-  .card{background:linear-gradient(160deg,#1b1b1b,#111);border:1px solid #2a2508;padding:14px;border-radius:16px;margin:10px 0;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+  .tab.on{display:block;animation:fadein .35s ease}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card{background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(34,211,238,.15);padding:14px;border-radius:18px;margin:10px 0;box-shadow:0 8px 24px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
   .row{display:flex;gap:8px;align-items:center}
   .row button{width:auto;padding:8px 12px;margin:0}
   .grow{flex:1;word-break:break-word}
-  .done{text-decoration:line-through;color:#6d6650}
-  .del{background:#3a1212;color:#f0a9a9;box-shadow:none;border:1px solid #5a2222}
-  .ed{background:#222;color:var(--gold);box-shadow:none;border:1px solid #3a3210}
-  .bar{height:10px;background:#222;border-radius:6px;overflow:hidden;margin-top:10px}
-  .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:0;transition:width .4s}
-  .nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(8,8,8,.96);border-top:1px solid #2a2508;backdrop-filter:blur(6px)}
+  .done{text-decoration:line-through;color:var(--mut)}
+  .del{background:rgba(248,113,113,.12);color:#fca5a5;box-shadow:none;border:1px solid rgba(248,113,113,.3)}
+  .ed{background:rgba(34,211,238,.08);color:var(--c);box-shadow:none;border:1px solid rgba(34,211,238,.3)}
+  .bar{height:8px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden;margin-top:10px}
+  .fill{height:100%;background:linear-gradient(90deg,#0891b2,var(--c2));width:0;transition:width .5s;box-shadow:0 0 10px var(--c)}
+  .nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:rgba(5,6,8,.85);border-top:1px solid rgba(34,211,238,.15);backdrop-filter:blur(12px)}
   .nav button{flex:1;border-radius:0;margin:0;background:none;color:var(--mut);box-shadow:none;padding:14px 0;font-size:10px;font-weight:500}
-  .nav button.on{color:var(--gold2);background:none}
-  .st{margin:10px 0;color:var(--gold2);font-size:14px}
-  #splash{position:fixed;inset:0;background:radial-gradient(circle,#2a2008 0%,#0b0b0b 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99;transition:opacity .5s}
+  .nav button.on{color:var(--c2);background:none;text-shadow:0 0 8px rgba(34,211,238,.6)}
+  .st{margin:10px 0;color:var(--c2);font-size:14px}
+  #splash{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99;transition:opacity .5s}
   #splash.hide{opacity:0;pointer-events:none}
-  #splash .logo{font-size:44px;font-weight:700;letter-spacing:4px;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));-webkit-background-clip:text;color:transparent}
-  #splash .sub{margin-top:10px;color:var(--mut);letter-spacing:3px;font-size:12px}
+  #splash .logo{font-size:56px;font-weight:800;letter-spacing:6px;color:var(--c2);text-shadow:0 0 18px var(--c),0 0 40px rgba(34,211,238,.5);animation:rise .9s ease both}
+  #splash .sp{font-size:22px;color:var(--c);text-shadow:0 0 12px var(--c);animation:spin 1.6s ease-in-out infinite;margin-bottom:6px}
+  #splash .sub{margin-top:12px;color:var(--mut);letter-spacing:4px;font-size:11px;animation:rise 1.2s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes spin{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.25) rotate(90deg)}}
 </style>
 </head>
 <body>
 
-<div id="splash"><div class="logo">KR STUDIO</div><div class="sub">CREATOR PRODUCTIVITY</div></div>
+<div id="splash"><div class="sp">✦</div><div class="logo">KR</div><div class="sub">CREATOR STUDIO</div></div>
 
 <div id="t-dash" class="tab on">
   <h2 id="hi">Dashboard</h2>
@@ -171,8 +175,8 @@ function clickSound(){
   try{
     if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
     var o = AC.createOscillator(); var g = AC.createGain();
-    o.type = 'sine'; o.frequency.value = 880;
-    g.gain.setValueAtTime(0.15, AC.currentTime);
+    o.type = 'sine'; o.frequency.value = 980;
+    g.gain.setValueAtTime(0.12, AC.currentTime);
     g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.08);
     o.connect(g); g.connect(AC.destination);
     o.start(); o.stop(AC.currentTime + 0.09);
@@ -190,7 +194,7 @@ setTimeout(function(){
   var s = $('splash');
   s.classList.add('hide');
   setTimeout(function(){ s.style.display = 'none'; }, 600);
-}, 2000);
+}, 1800);
 
 /* ---------- tabs ---------- */
 function show(name){
@@ -243,7 +247,7 @@ function drawGoals(){
     var r = document.createElement('div'); r.className = 'row';
     var cb = document.createElement('input');
     cb.type = 'checkbox'; cb.checked = g.done;
-    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#d4af37';
+    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#22d3ee';
     cb.onchange = function(){ toggleGoal(g.id); };
     var t = document.createElement('div');
     t.className = 'grow' + (g.done ? ' done' : '');
@@ -418,7 +422,7 @@ function drawRoutine(){
     var row = document.createElement('div'); row.className = 'row';
     var cb = document.createElement('input');
     cb.type = 'checkbox';
-    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#d4af37';
+    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#22d3ee';
     cb.checked = logs.some(function(x){ return x.date === t && x.rid === r.id; });
     cb.onchange = function(){ toggleRoutine(r.id); };
     var nm = document.createElement('div'); nm.className = 'grow'; nm.textContent = r.name;
@@ -508,7 +512,6 @@ $('rbtn').onclick = function(){
 };
 
 /* ---------- dashboard ---------- */
-function likesTotalSafe(){ return likesTotal(); }
 function drawDash(){
   var a = load('goals');
   var td = a.filter(function(g){ return g.date === today(); });
@@ -580,4 +583,4 @@ var st0 = loadSet().start || 'dash';
 show(st0);
 </script>
 </body>
-  </html>
+    </html>
