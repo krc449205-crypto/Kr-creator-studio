@@ -41,41 +41,108 @@ jobs:
           open(p, 'w').write(s)
           EOF
 
-      - name: Make app icon
+      - name: Make premium app icon
         run: |
           rm -rf android/app/src/main/res/mipmap-anydpi-v26
           python3 - <<'EOF'
           import math, struct, zlib
-          def png(path, s):
-              h = s / 2.0
-              rr = 0.2 * s
-              rows = []
+
+          SS = 3
+          GOLD_HI = (255, 236, 170)
+          GOLD_LO = (176, 126, 40)
+          SIL_HI = (245, 248, 252)
+          SIL_LO = (120, 128, 140)
+
+          def clamp(x):
+              return 0.0 if x < 0 else (1.0 if x > 1 else x)
+
+          def lerp3(a, b, t):
+              return (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t)
+
+          def mix(c1, c2, t):
+              return (c1[0] * (1 - t) + c2[0] * t, c1[1] * (1 - t) + c2[1] * t, c1[2] * (1 - t) + c2[2] * t)
+
+          def segd(px, py, ax, ay, bx, by):
+              vx, vy = bx - ax, by - ay
+              wx, wy = px - ax, py - ay
+              L = vx * vx + vy * vy
+              t = clamp((wx * vx + wy * vy) / L) if L else 0.0
+              dx = px - (ax + t * vx)
+              dy = py - (ay + t * vy)
+              return math.hypot(dx, dy)
+
+          MONO = [
+              [(0.27, 0.28), (0.27, 0.72)],
+              [(0.30, 0.50), (0.45, 0.28)],
+              [(0.33, 0.50), (0.46, 0.72)],
+              [(0.55, 0.28), (0.55, 0.72)],
+              [(0.55, 0.28), (0.65, 0.28), (0.70, 0.33), (0.70, 0.42), (0.65, 0.47), (0.55, 0.47)],
+              [(0.61, 0.47), (0.71, 0.72)],
+          ]
+          MONO_SEGS = []
+          for poly in MONO:
+              for i in range(len(poly) - 1):
+                  MONO_SEGS.append((poly[i], poly[i + 1]))
+
+          def mono_dist(u, v):
+              return min(segd(u, v, a[0], a[1], b[0], b[1]) for a, b in MONO_SEGS)
+
+          def cov(d, w, aa):
+              return clamp(0.5 - (d - w) / aa)
+
+          def shade(u, v, aa, circle):
+              if circle:
+                  sd = math.hypot(u - 0.5, v - 0.5) - 0.5
+              else:
+                  r = 0.22
+                  qx = abs(u - 0.5) - (0.5 - r)
+                  qy = abs(v - 0.5) - (0.5 - r)
+                  sd = math.hypot(max(qx, 0), max(qy, 0)) + min(max(qx, qy), 0) - r
+              sc = cov(sd, 0, aa)
+              if sc <= 0:
+                  return None
+              d0 = math.hypot(u - 0.5, v - 0.42) / 0.72
+              col = lerp3((34, 30, 22), (3, 3, 4), clamp(d0))
+              gd2 = (u - 0.5) ** 2 + (v - 0.5) ** 2
+              col = mix(col, GOLD_LO, 0.22 * math.exp(-gd2 / 0.035))
+              rd = abs(math.hypot(u - 0.5, v - 0.5) - 0.44)
+              rc = cov(rd, 0.0045, aa) * 0.9
+              col = mix(col, lerp3(SIL_HI, SIL_LO, clamp((u + v) / 2)), rc)
+              ud = segd(u, v, 0.38, 0.80, 0.62, 0.80)
+              col = mix(col, GOLD_HI, cov(ud, 0.0035, aa) * 0.9)
+              md = mono_dist(u, v)
+              col = mix(col, GOLD_LO, math.exp(-(md * md) / 0.003) * 0.35)
+              mc = cov(md, 0.036, aa)
+              col = mix(col, lerp3(GOLD_HI, GOLD_LO, clamp((u + v) / 2)), mc)
+              return (col[0], col[1], col[2], sc)
+
+          def render(s, circle):
+              aa = 1.0 / s
+              rows = bytearray()
               for y in range(s):
-                  row = bytearray([0])
+                  rows.append(0)
                   for x in range(s):
-                      dx = x + 0.5 - h
-                      dy = y + 0.5 - h
-                      ax, ay = abs(dx), abs(dy)
-                      inside = ax <= h and ay <= h
-                      if inside and ax > h - rr and ay > h - rr:
-                          if math.hypot(ax - (h - rr), ay - (h - rr)) > rr:
-                              inside = False
-                      if not inside:
-                          row += bytes([0, 0, 0, 0])
-                          continue
-                      d = math.hypot(dx, dy) / h
-                      r, g, b = 11, 11, 11
-                      if 0.86 <= d <= 0.90:
-                          r, g, b = 210, 215, 222
-                      elif 0.74 <= d <= 0.80:
-                          r, g, b = 212, 175, 55
-                      u = ax / (0.45 * h)
-                      v = ay / (0.45 * h)
-                      if u ** (2 / 3) + v ** (2 / 3) <= 1:
-                          r, g, b = 243, 215, 122
-                      row += bytes([r, g, b, 255])
-                  rows.append(bytes(row))
-              raw = b''.join(rows)
+                      sr = sg = sb = sa = 0.0
+                      n = 0
+                      for i in range(SS):
+                          for j in range(SS):
+                              u = (x + (i + 0.5) / SS) / s
+                              v = (y + (j + 0.5) / SS) / s
+                              n += 1
+                              res = shade(u, v, aa, circle)
+                              if res:
+                                  r, g, b, a = res
+                                  sr += r * a
+                                  sg += g * a
+                                  sb += b * a
+                                  sa += a
+                      if sa > 0:
+                          rows += bytes([int(sr / sa), int(sg / sa), int(sb / sa), int(255 * sa / n)])
+                      else:
+                          rows += bytes([0, 0, 0, 0])
+              return bytes(rows)
+
+          def write_png(path, s, raw):
               def chunk(t, data):
                   c = struct.pack('>I', len(data)) + t + data
                   return c + struct.pack('>I', zlib.crc32(t + data) & 0xffffffff)
@@ -84,10 +151,11 @@ jobs:
                       + chunk(b'IDAT', zlib.compress(raw, 9))
                       + chunk(b'IEND', b''))
               open(path, 'wb').write(data)
+
           RES = 'android/app/src/main/res'
           for d, s in [('mdpi', 48), ('hdpi', 72), ('xhdpi', 96), ('xxhdpi', 144), ('xxxhdpi', 192)]:
-              png(RES + '/mipmap-' + d + '/ic_launcher.png', s)
-              png(RES + '/mipmap-' + d + '/ic_launcher_round.png', s)
+              write_png(RES + '/mipmap-' + d + '/ic_launcher.png', s, render(s, False))
+              write_png(RES + '/mipmap-' + d + '/ic_launcher_round.png', s, render(s, True))
           EOF
 
       - name: Build APK
