@@ -18,10 +18,6 @@ jobs:
         with:
           node-version: '20'
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Install packages
         run: npm install
 
@@ -45,33 +41,73 @@ jobs:
           open(p, 'w').write(s)
           EOF
 
-      - name: Set app icon from uploaded logo
+      - name: Make green G app icon from code
         run: |
-          pip install pillow
           rm -rf android/app/src/main/res/mipmap-anydpi-v26
           python3 - <<'EOF'
-          import glob, os
-          from PIL import Image
+          import math, struct, zlib
 
-          files = [f for f in glob.glob('*.png') if os.path.getsize(f) > 1000]
-          if not files:
-              raise SystemExit('Repo ke root mein logo PNG nahi mili')
+          def inside_sq(u, v):
+              ax = abs(u - 0.5); ay = abs(v - 0.5); r = 0.22
+              if ax > 0.5 or ay > 0.5:
+                  return False
+              if ax > 0.5 - r and ay > 0.5 - r and math.hypot(ax - (0.5 - r), ay - (0.5 - r)) > r:
+                  return False
+              return True
 
-          im = Image.open(files[0]).convert('RGBA')
-          mask = im.convert('L').point(lambda p: 255 if p > 60 else 0)
-          box = mask.getbbox()
-          if box:
-              im = im.crop(box)
-          w, h = im.size
-          side = int(max(w, h) * 1.25)
-          sq = Image.new('RGBA', (side, side), (5, 5, 5, 255))
-          sq.paste(im, ((side - w) // 2, (side - h) // 2), im)
+          def is_g(u, v):
+              dx = u - 0.5; dy = v - 0.5
+              d = math.hypot(dx, dy)
+              ang = math.degrees(math.atan2(dy, dx))
+              if 0.19 <= d <= 0.32 and not (-65 <= ang <= 5):
+                  return True
+              if 0.52 <= u <= 0.72 and 0.44 <= v <= 0.54:
+                  return True
+              if 0.62 <= u <= 0.72 and 0.44 <= v <= 0.72:
+                  return True
+              return False
+
+          def color(u, v):
+              if is_g(u, v):
+                  return (12, 34, 12)
+              t = v
+              return (150 + (30 - 150) * t, 255 + (200 - 255) * t, 90 + (50 - 90) * t)
+
+          def render(s):
+              SS = 3
+              rows = bytearray()
+              for y in range(s):
+                  rows.append(0)
+                  for x in range(s):
+                      R = G = B = 0; n = 0
+                      for j in range(SS):
+                          for i in range(SS):
+                              u = (x + (i + 0.5) / SS) / s
+                              v = (y + (j + 0.5) / SS) / s
+                              if inside_sq(u, v):
+                                  c = color(u, v)
+                                  R += c[0]; G += c[1]; B += c[2]; n += 1
+                      if n:
+                          rows += bytes([int(R / n), int(G / n), int(B / n), int(255 * n / (SS * SS))])
+                      else:
+                          rows += bytes([0, 0, 0, 0])
+              return bytes(rows)
+
+          def write_png(path, s, raw):
+              def chunk(t, data):
+                  c = struct.pack('>I', len(data)) + t + data
+                  return c + struct.pack('>I', zlib.crc32(t + data) & 0xffffffff)
+              data = (b'\x89PNG\r\n\x1a\n'
+                      + chunk(b'IHDR', struct.pack('>IIBBBBB', s, s, 8, 6, 0, 0, 0))
+                      + chunk(b'IDAT', zlib.compress(raw, 9))
+                      + chunk(b'IEND', b''))
+              open(path, 'wb').write(data)
 
           RES = 'android/app/src/main/res'
           for d, s in [('mdpi', 48), ('hdpi', 72), ('xhdpi', 96), ('xxhdpi', 144), ('xxxhdpi', 192)]:
-              out = sq.resize((s, s), Image.LANCZOS).convert('RGB')
-              out.save(RES + '/mipmap-' + d + '/ic_launcher.png')
-              out.save(RES + '/mipmap-' + d + '/ic_launcher_round.png')
+              raw = render(s)
+              write_png(RES + '/mipmap-' + d + '/ic_launcher.png', s, raw)
+              write_png(RES + '/mipmap-' + d + '/ic_launcher_round.png', s, raw)
           EOF
 
       - name: Build APK
