@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KR Creator Studio</title>
 <style>
+  @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
   :root{--gold:#d4af37;--gold2:#f3d77a;--silver:#e8edf2;--bg:#000;--txt:#f5f0e1;--mut:#8f8a7a}
   *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
   html,body{height:100%}
@@ -31,12 +32,17 @@
   @keyframes fromR{from{opacity:0;transform:translate3d(42px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
   @keyframes fromL{from{opacity:0;transform:translate3d(-42px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 
-  .prof{text-align:center;margin:4px 0 6px}
-  .dp{width:112px;height:112px;border-radius:50%;margin:0 auto;padding:4px;background:conic-gradient(from 0deg,#f3d77a,#b8902a,#fff3c4,#d4af37,#f3d77a);box-shadow:0 0 22px rgba(212,175,55,.35)}
-  .dp .in{width:100%;height:100%;border-radius:50%;background:#0c0c0c;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:800;color:var(--gold2)}
+  /* profile row: DP left, name right */
+  .prof{display:flex;align-items:center;gap:16px;margin:6px 0 10px}
+  .dp{position:relative;flex:0 0 104px;width:104px;height:104px;border-radius:50%;overflow:hidden;box-shadow:0 0 22px rgba(168,85,247,.25)}
+  .dp::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from var(--a),#f3d77a,#22d3ee,#a855f7,#f43f5e,#f3d77a);animation:spin 4s linear infinite,hue 12s linear infinite}
+  @keyframes spin{to{--a:360deg}}
+  @keyframes hue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+  .dp .in{position:absolute;inset:4px;border-radius:50%;background:#0c0c0c;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:var(--gold2)}
   .dp img{width:100%;height:100%;object-fit:cover;display:block}
-  .pname{font-size:20px;font-weight:700;margin-top:10px;color:var(--txt)}
-  .psub{color:var(--mut);font-size:13px;margin-top:2px}
+  .pinfo{flex:1;min-width:0}
+  .pname{font-size:20px;font-weight:700;color:var(--txt);word-break:break-word}
+  .psub{color:var(--mut);font-size:13px;margin-top:4px}
 
   .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 6px}
   .pbox{position:relative;border-radius:16px;padding:13px;min-height:118px;text-align:left;background:linear-gradient(160deg,#1a1a1a,#060606);border:1px solid rgba(232,237,242,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 14px rgba(232,237,242,.12),0 8px 18px rgba(0,0,0,.6);overflow:hidden}
@@ -121,8 +127,10 @@
 
   <div class="prof">
     <div class="dp"><div class="in" id="dpBox">KR</div></div>
-    <div class="pname" id="pName">-</div>
-    <div class="psub">Total subscribers: <b id="pSubs">0</b></div>
+    <div class="pinfo">
+      <div class="pname" id="pName">-</div>
+      <div class="psub">Total subscribers: <b id="pSubs">0</b></div>
+    </div>
   </div>
 
   <div class="pgrid">
@@ -971,4 +979,4 @@ if(localStorage.getItem('introSeen')){
 }
 </script>
 </body>
-    </html>
+                                    </html>
