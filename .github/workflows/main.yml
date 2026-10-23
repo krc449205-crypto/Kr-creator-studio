@@ -41,11 +41,26 @@ jobs:
           open(p, 'w').write(s)
           EOF
 
-      - name: Make green G app icon from code
+      - name: Make arrow app icon from code
         run: |
           rm -rf android/app/src/main/res/mipmap-anydpi-v26
           python3 - <<'EOF'
           import math, struct, zlib
+
+          def pip(x, y, poly):
+              inside = False
+              n = len(poly)
+              j = n - 1
+              for i in range(n):
+                  xi, yi = poly[i]
+                  xj, yj = poly[j]
+                  if (yi > y) != (yj > y) and x < (xj - xi) * (y - yi) / (yj - yi + 1e-12) + xi:
+                      inside = not inside
+                  j = i
+              return inside
+
+          ARROW = [(-0.30,-0.06),(0.00,-0.06),(0.00,-0.17),(0.30,0.0),(0.00,0.17),(0.00,0.06),(-0.30,0.06)]
+          C = math.sqrt(0.5)
 
           def inside_sq(u, v):
               ax = abs(u - 0.5); ay = abs(v - 0.5); r = 0.22
@@ -55,20 +70,14 @@ jobs:
                   return False
               return True
 
-          def is_g(u, v):
+          def is_arrow(u, v):
               dx = u - 0.5; dy = v - 0.5
-              d = math.hypot(dx, dy)
-              ang = math.degrees(math.atan2(dy, dx))
-              if 0.19 <= d <= 0.32 and not (-65 <= ang <= 5):
-                  return True
-              if 0.52 <= u <= 0.72 and 0.44 <= v <= 0.54:
-                  return True
-              if 0.62 <= u <= 0.72 and 0.44 <= v <= 0.72:
-                  return True
-              return False
+              lx = dx * C - dy * C
+              ly = dx * C + dy * C
+              return pip(lx, ly, ARROW)
 
           def color(u, v):
-              if is_g(u, v):
+              if is_arrow(u, v):
                   return (12, 34, 12)
               t = v
               return (150 + (30 - 150) * t, 255 + (200 - 255) * t, 90 + (50 - 90) * t)
