@@ -41,6 +41,55 @@ jobs:
           open(p, 'w').write(s)
           EOF
 
+      - name: Make app icon
+        run: |
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          python3 - <<'EOF'
+          import math, struct, zlib
+          def png(path, s):
+              h = s / 2.0
+              rr = 0.2 * s
+              rows = []
+              for y in range(s):
+                  row = bytearray([0])
+                  for x in range(s):
+                      dx = x + 0.5 - h
+                      dy = y + 0.5 - h
+                      ax, ay = abs(dx), abs(dy)
+                      inside = ax <= h and ay <= h
+                      if inside and ax > h - rr and ay > h - rr:
+                          if math.hypot(ax - (h - rr), ay - (h - rr)) > rr:
+                              inside = False
+                      if not inside:
+                          row += bytes([0, 0, 0, 0])
+                          continue
+                      d = math.hypot(dx, dy) / h
+                      r, g, b = 11, 11, 11
+                      if 0.86 <= d <= 0.90:
+                          r, g, b = 210, 215, 222
+                      elif 0.74 <= d <= 0.80:
+                          r, g, b = 212, 175, 55
+                      u = ax / (0.45 * h)
+                      v = ay / (0.45 * h)
+                      if u ** (2 / 3) + v ** (2 / 3) <= 1:
+                          r, g, b = 243, 215, 122
+                      row += bytes([r, g, b, 255])
+                  rows.append(bytes(row))
+              raw = b''.join(rows)
+              def chunk(t, data):
+                  c = struct.pack('>I', len(data)) + t + data
+                  return c + struct.pack('>I', zlib.crc32(t + data) & 0xffffffff)
+              data = (b'\x89PNG\r\n\x1a\n'
+                      + chunk(b'IHDR', struct.pack('>IIBBBBB', s, s, 8, 6, 0, 0, 0))
+                      + chunk(b'IDAT', zlib.compress(raw, 9))
+                      + chunk(b'IEND', b''))
+              open(path, 'wb').write(data)
+          RES = 'android/app/src/main/res'
+          for d, s in [('mdpi', 48), ('hdpi', 72), ('xhdpi', 96), ('xxhdpi', 144), ('xxxhdpi', 192)]:
+              png(RES + '/mipmap-' + d + '/ic_launcher.png', s)
+              png(RES + '/mipmap-' + d + '/ic_launcher_round.png', s)
+          EOF
+
       - name: Build APK
         run: |
           cd android
