@@ -15,8 +15,7 @@
   @keyframes hueSpin{from{filter:blur(110px) hue-rotate(0deg)}to{filter:blur(110px) hue-rotate(360deg)}}
   #mainwrap{position:relative;z-index:1;min-height:70vh;overflow:hidden}
 
-  .badge{display:block;width:96px;height:96px;margin:4px auto 6px}
-  h2{margin:4px 0 14px;font-weight:600;letter-spacing:.5px;color:var(--gold2);text-align:center}
+  h2{margin:4px 0 14px;font-weight:600;letter-spacing:.5px;color:var(--gold2)}
   h3{margin:22px 0 8px;color:var(--gold);font-size:13px;letter-spacing:1px;text-transform:uppercase}
   input,button,select,textarea{width:100%;padding:14px;margin:6px 0;border-radius:12px;font-size:16px;outline:none}
   input,select,textarea{background:#0c0c0c;color:var(--txt);border:1px solid #2a2a2a;transition:border-color .2s}
@@ -103,19 +102,6 @@
 
 <div id="mainwrap">
 <div id="t-dash" class="tab on">
-  <svg class="badge" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <path id="bp" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/>
-      <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#b8902a"/></linearGradient>
-    </defs>
-    <circle cx="100" cy="100" r="98" fill="#000" stroke="#e8edf2" stroke-width="2.5"/>
-    <circle cx="100" cy="100" r="88" fill="#000" stroke="#e8edf2" stroke-width="1"/>
-    <text font-family="sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#ffffff">
-      <textPath href="#bp" startOffset="25%" text-anchor="middle">KR CREATOR STUDIO</textPath>
-    </text>
-    <circle cx="100" cy="100" r="58" fill="#050505" stroke="url(#gg)" stroke-width="3"/>
-    <text x="100" y="116" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="800" fill="url(#gg)">KR</text>
-  </svg>
   <h2 id="hi">Dashboard</h2>
   <div class="card">Aaj ke goals: <b id="d1">0</b></div>
   <div class="card">Aaj ke pure hue: <b id="d2">0</b>
@@ -197,10 +183,11 @@
   <div id="sett" class="st"></div>
 
   <h3>Reminders</h3>
-  <button id="perm">1. Permission do</button>
+  <div id="nstat" class="st">Notification: check ho raha hai...</div>
+  <button id="remAllow">Notification allow karo</button>
   <input id="title" placeholder="Reminder ka title">
   <input id="when" type="datetime-local">
-  <button id="set">2. Reminder set karo</button>
+  <button id="set">Reminder set karo</button>
   <div id="status" class="st">Status: abhi kuch nahi hua</div>
   <div id="list"></div>
 
@@ -312,7 +299,7 @@ document.addEventListener('touchcancel', endSwipe, {passive:true});
 var introT = null;
 function checkName(){
   var s = loadSet();
-  if(s.name){ applySettings(); return; }
+  if(s.name){ applySettings(); ensureNotif(); return; }
   $('welcome').style.display = 'flex';
   $('wname').focus();
 }
@@ -347,12 +334,12 @@ $('wgo').onclick = function(){
     w.style.transition = 'opacity .5s ease';
     w.style.opacity = '0';
     setTimeout(function(){ w.style.display = 'none'; w.style.opacity = ''; w.style.transition = ''; }, 500);
+    ensureNotif();
   }, 2000);
 };
 
 /* ---------- tabs (smooth) ---------- */
 function show(name, dir){
-  var old = $('t-' + curTab);
   curTab = name;
   ORDER.forEach(function(n){
     var t = $('t-' + n);
@@ -705,6 +692,32 @@ var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugin
 var CH = 'krremind2';
 if(LN){ LN.createChannel({id:CH, name:'KR Reminders', importance:5, visibility:1, vibration:true}).catch(function(){}); }
 function say(t){ $('status').textContent = 'Status: ' + t; }
+function setNstat(t){ $('nstat').textContent = 'Notification: ' + t; }
+
+/* notification permission apne aap maangna (pehli baar + har baar jab band ho) */
+function ensureNotif(){
+  if(!LN){ setNstat('sirf APK mein chalega'); return; }
+  LN.checkPermissions().then(function(r){
+    if(r.display === 'granted'){ setNstat('ON'); exactCheck(); return; }
+    return LN.requestPermissions().then(function(p){
+      if(p.display === 'granted'){ setNstat('ON'); exactCheck(); }
+      else { setNstat('band hai (neeche button dabao)'); }
+    });
+  }).catch(function(e){ setNstat('error: ' + e.message); });
+}
+/* exact alarm: agar band ho to phone ki wo settings khol do */
+function exactCheck(){
+  try{
+    if(typeof LN.checkExactNotificationSetting !== 'function') return;
+    LN.checkExactNotificationSetting().then(function(r){
+      if(r && r.exact_alarm === 'denied' && typeof LN.changeExactNotificationSetting === 'function'){
+        LN.changeExactNotificationSetting();
+      }
+    }).catch(function(){});
+  }catch(e){}
+}
+$('remAllow').onclick = function(){ ensureNotif(); };
+
 function drawRem(){
   var l = $('list'); l.innerHTML = '';
   var a = load('rem');
@@ -726,11 +739,6 @@ async function delRem(id){
     drawRem(); say('reminder delete ho gaya');
   }catch(e){ say('delete error: ' + e.message); }
 }
-$('perm').onclick = async function(){
-  if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
-  try{ var pr = await LN.requestPermissions(); say('permission: ' + pr.display); }
-  catch(e){ say('permission error: ' + e.message); }
-};
 $('set').onclick = async function(){
   if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
   var title = $('title').value.trim();
@@ -747,7 +755,7 @@ $('set').onclick = async function(){
     }]});
     var a = load('rem'); a.push({id:id, title:title, time:t.getTime()}); save('rem', a);
     drawRem(); say('reminder set ho gaya: ' + t.toLocaleString());
-  }catch(e){ say('set error: ' + e.message); }
+  }catch(e){ say('set error: ' + e.message + ' (upar Notification allow karo dabao)'); }
 };
 
 /* ---------- start ---------- */
@@ -761,4 +769,4 @@ if(localStorage.getItem('introSeen')){
 }
 </script>
 </body>
-    </html>
+  </html>
