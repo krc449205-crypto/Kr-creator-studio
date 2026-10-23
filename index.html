@@ -114,6 +114,7 @@
   <div class="card">Aaj ka plan: <b id="d7">0</b></div>
   <div class="card">Routine streak: <b id="d8">0</b> din</div>
   <div class="card">Achievements: <b id="d9">0</b></div>
+  <div class="card">Agla 30 min reminder: <b id="dRep">-</b></div>
 </div>
 
 <div id="t-goals" class="tab">
@@ -181,6 +182,17 @@
   </select>
   <button id="sset">Settings save karo</button>
   <div id="sett" class="st"></div>
+
+  <h3>30 minute ka reminder</h3>
+  <select id="repOn">
+    <option value="off">Band</option>
+    <option value="on">Chalu</option>
+  </select>
+  <input id="repStart" type="time" value="12:00">
+  <input id="repEnd" type="time" value="22:00">
+  <input id="repMsg" placeholder="Message (jaise: Ab kaam par lautiye)">
+  <button id="repSave">30 min reminder save karo</button>
+  <div id="repSt" class="st"></div>
 
   <h3>Reminders</h3>
   <div id="nstat" class="st">Notification: check ho raha hai...</div>
@@ -360,7 +372,7 @@ function show(name, dir){
   if(name === 'likes') drawLikes();
   if(name === 'plan') drawPlan();
   if(name === 'routine') drawRoutine();
-  if(name === 'more'){ drawSettings(); drawRem(); drawAch(); }
+  if(name === 'more'){ drawSettings(); drawRepForm(); drawRem(); drawAch(); }
 }
 ORDER.forEach(function(n){ $('n-' + n).onclick = function(){
   if(n === curTab) return;
@@ -385,6 +397,79 @@ $('sset').onclick = function(){
   localStorage.setItem('settings', JSON.stringify(s));
   applySettings();
   $('sett').textContent = 'Settings save ho gayi';
+};
+
+/* ---------- 30 minute repeat reminder ---------- */
+var REP_BASE = 100000, REP_MAX = 60;
+function repGet(){
+  var o = null;
+  try{ o = JSON.parse(localStorage.getItem('rep') || 'null'); }catch(e){}
+  return o || {on:false, start:'12:00', end:'22:00', msg:'Ab kaam par lautiye'};
+}
+function hm(s){ var p = s.split(':'); return parseInt(p[0],10) * 60 + parseInt(p[1],10); }
+function fmtT(dt){
+  if(!dt) return '-';
+  return dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+function repTimes(days){
+  var r = repGet(); var out = [];
+  if(!r.on) return out;
+  var s = hm(r.start), e = hm(r.end);
+  if(e <= s) return out;
+  var now = new Date();
+  for(var d = 0; d < days; d++){
+    for(var m = s; m <= e; m += 30){
+      var dt = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d, Math.floor(m / 60), m % 60, 0);
+      if(dt.getTime() > Date.now() + 5000) out.push(dt);
+    }
+  }
+  return out.slice(0, REP_MAX);
+}
+function nextRep(){
+  var t = repTimes(2);
+  return t.length ? t[0] : null;
+}
+function repSay(t){ $('repSt').textContent = t; }
+async function applyRep(){
+  if(!LN) return;
+  var old = [];
+  try{ old = JSON.parse(localStorage.getItem('repIds') || '[]'); }catch(e){}
+  if(old.length){
+    try{ await LN.cancel({notifications: old.map(function(id){ return {id:id}; })}); }catch(e){}
+  }
+  localStorage.setItem('repIds', '[]');
+  var times = repTimes(2);
+  if(times.length){
+    var msg = repGet().msg || 'Ab kaam par lautiye';
+    var list = times.map(function(dt, i){
+      return {id: REP_BASE + i, title: 'KR Creator Studio', body: msg, channelId: CH,
+              schedule: {at: dt, allowWhileIdle: true}};
+    });
+    try{
+      await LN.schedule({notifications: list});
+      localStorage.setItem('repIds', JSON.stringify(list.map(function(x){ return x.id; })));
+    }catch(e){ repSay('Error: ' + e.message); }
+  }
+  drawDash();
+}
+function drawRepForm(){
+  var r = repGet();
+  $('repOn').value = r.on ? 'on' : 'off';
+  $('repStart').value = r.start || '12:00';
+  $('repEnd').value = r.end || '22:00';
+  $('repMsg').value = r.msg || '';
+  var n = nextRep();
+  repSay(r.on ? (n ? 'Agla reminder: ' + fmtT(n) : 'Aaj ke time mein koi reminder nahi') : 'Band hai');
+}
+$('repSave').onclick = async function(){
+  var on = $('repOn').value === 'on';
+  var s = $('repStart').value, e = $('repEnd').value;
+  var m = $('repMsg').value.trim() || 'Ab kaam par lautiye';
+  if(on && (!s || !e || hm(e) <= hm(s))){ repSay('End time start se baad ka hona chahiye'); return; }
+  localStorage.setItem('rep', JSON.stringify({on:on, start:s || '12:00', end:e || '22:00', msg:m}));
+  await applyRep();
+  var n = nextRep();
+  repSay(on ? (n ? 'Save ho gaya. Agla reminder: ' + fmtT(n) : 'Save ho gaya, par aaj ka time nikal gaya') : 'Band kar diya');
 };
 
 /* ---------- goals ---------- */
@@ -648,6 +733,7 @@ $('expb').onclick = function(){
   var o = {};
   KEYS.forEach(function(k){ o[k] = load(k); });
   o.settings = loadSet();
+  o.rep = repGet();
   $('exp').value = JSON.stringify(o);
   $('ist').textContent = 'Export ho gaya. Text copy karke safe jagah save karo.';
 };
@@ -657,16 +743,20 @@ $('impb').onclick = function(){
   if(!o || typeof o !== 'object'){ $('ist').textContent = 'Galat text hai'; return; }
   KEYS.forEach(function(k){ if(Array.isArray(o[k])) save(k, o[k]); });
   if(o.settings && typeof o.settings === 'object') localStorage.setItem('settings', JSON.stringify(o.settings));
+  if(o.rep && typeof o.rep === 'object') localStorage.setItem('rep', JSON.stringify(o.rep));
   $('ist').textContent = 'Import ho gaya';
-  applySettings(); drawDash(); drawSettings(); drawRem(); drawAch();
+  applySettings(); drawDash(); drawSettings(); drawRepForm(); drawRem(); drawAch();
+  applyRep();
 };
 $('rbtn').onclick = function(){
   if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
   KEYS.forEach(function(k){ localStorage.removeItem(k); });
   localStorage.removeItem('settings');
+  localStorage.removeItem('rep');
   $('rtxt').value = '';
   $('ist').textContent = 'Sab data delete ho gaya';
-  applySettings(); drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawSettings(); drawRem(); drawAch();
+  applySettings(); drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawSettings(); drawRepForm(); drawRem(); drawAch();
+  applyRep();
 };
 
 /* ---------- dashboard ---------- */
@@ -685,6 +775,9 @@ function drawDash(){
   $('d7').textContent = load('plan').filter(function(p){ return p.date === today(); }).length;
   $('d8').textContent = streak();
   $('d9').textContent = achList().filter(function(x){ return x.ok; }).length;
+  var r = repGet();
+  var n = nextRep();
+  $('dRep').textContent = !r.on ? 'Band hai' : (n ? fmtT(n) : 'Aaj ka time khatam');
 }
 
 /* ---------- reminders ---------- */
@@ -694,18 +787,16 @@ if(LN){ LN.createChannel({id:CH, name:'KR Reminders', importance:5, visibility:1
 function say(t){ $('status').textContent = 'Status: ' + t; }
 function setNstat(t){ $('nstat').textContent = 'Notification: ' + t; }
 
-/* notification permission apne aap maangna (pehli baar + har baar jab band ho) */
 function ensureNotif(){
   if(!LN){ setNstat('sirf APK mein chalega'); return; }
   LN.checkPermissions().then(function(r){
-    if(r.display === 'granted'){ setNstat('ON'); exactCheck(); return; }
+    if(r.display === 'granted'){ setNstat('ON'); exactCheck(); applyRep(); return; }
     return LN.requestPermissions().then(function(p){
-      if(p.display === 'granted'){ setNstat('ON'); exactCheck(); }
+      if(p.display === 'granted'){ setNstat('ON'); exactCheck(); applyRep(); }
       else { setNstat('band hai (neeche button dabao)'); }
     });
   }).catch(function(e){ setNstat('error: ' + e.message); });
 }
-/* exact alarm: agar band ho to phone ki wo settings khol do */
 function exactCheck(){
   try{
     if(typeof LN.checkExactNotificationSetting !== 'function') return;
