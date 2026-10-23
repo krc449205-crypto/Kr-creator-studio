@@ -5,32 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KR Creator Studio</title>
 <style>
-  @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
-  :root{--gold:#d4af37;--gold2:#f3d77a;--silver:#e8edf2;--bg:#050505;--txt:#f5f0e1;--mut:#8f8a7a}
+  :root{--gold:#d4af37;--gold2:#f3d77a;--silver:#e8edf2;--bg:#000;--txt:#f5f0e1;--mut:#8f8a7a}
   *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
   html,body{height:100%}
   body{background:var(--bg);color:var(--txt);font-family:sans-serif;margin:0;padding:20px 16px 100px;min-height:100vh;position:relative;overflow-x:hidden}
+  .glow{position:fixed;width:320px;height:320px;border-radius:50%;filter:blur(110px);opacity:.07;pointer-events:none;z-index:0;animation:hueSpin 18s linear infinite}
+  .g1{background:var(--gold);left:-150px;top:-120px}
+  .g2{background:#22d3ee;right:-160px;bottom:-140px;animation-duration:22s}
+  @keyframes hueSpin{from{filter:blur(110px) hue-rotate(0deg)}to{filter:blur(110px) hue-rotate(360deg)}}
+  #mainwrap{position:relative;z-index:1;min-height:70vh}
 
-  /* colorful soft light behind the black screen, colors slowly change */
-  .light{position:fixed;width:340px;height:340px;border-radius:50%;filter:blur(80px);opacity:.38;pointer-events:none;z-index:0;animation:drift 16s ease-in-out infinite alternate, hueSpin 14s linear infinite}
-  .l1{background:var(--gold);left:-120px;bottom:-100px}
-  .l2{background:#22d3ee;right:-140px;top:-80px;animation-duration:19s,14s;animation-delay:-6s,-4s}
-  .l3{background:#a855f7;left:-60px;top:30%;width:300px;height:300px;animation-duration:22s,18s;animation-delay:-10s,-2s}
-  .l4{background:#f43f5e;right:-100px;bottom:10%;width:280px;height:280px;animation-duration:17s,16s;animation-delay:-3s,-9s}
-  @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(70px,-50px) scale(1.15)}}
-  @keyframes hueSpin{from{filter:blur(80px) hue-rotate(0deg)}to{filter:blur(80px) hue-rotate(360deg)}}
-  #mainwrap{position:relative;z-index:1;min-height:70vh;touch-action:pan-y}
-
-  /* thick gold-silver border that follows the phone's rounded corners */
-  .frame{position:fixed;inset:0;pointer-events:none;z-index:50;border-radius:44px}
-  .frame::before{content:"";position:absolute;inset:0;border-radius:44px;padding:8px;background:conic-gradient(from var(--a),rgba(212,175,55,.12) 0deg,rgba(212,175,55,.12) 180deg,#fff7d6 270deg,var(--gold2) 300deg,var(--gold) 330deg,rgba(212,175,55,.12) 360deg);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 4s linear infinite;box-shadow:inset 0 0 22px rgba(212,175,55,.35)}
-  .frame::after{content:"";position:absolute;inset:0;border-radius:44px;box-shadow:inset 0 0 0 1px rgba(255,240,190,.25),0 0 26px rgba(212,175,55,.25)}
-  @keyframes spin{to{--a:360deg}}
-
-  h2{margin:4px 0 14px;font-weight:600;letter-spacing:.5px;color:var(--gold2)}
+  .badge{display:block;width:96px;height:96px;margin:4px auto 6px}
+  h2{margin:4px 0 14px;font-weight:600;letter-spacing:.5px;color:var(--gold2);text-align:center}
   h3{margin:22px 0 8px;color:var(--gold);font-size:13px;letter-spacing:1px;text-transform:uppercase}
   input,button,select,textarea{width:100%;padding:14px;margin:6px 0;border-radius:12px;font-size:16px;outline:none}
-  input,select,textarea{background:#101010;color:var(--txt);border:1px solid #2a2a2a}
+  input,select,textarea{background:#0c0c0c;color:var(--txt);border:1px solid #2a2a2a}
   input:focus,select:focus,textarea:focus{border-color:var(--gold)}
   textarea{height:110px;font-size:13px}
   button{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111;border:none;font-weight:600;box-shadow:0 4px 14px rgba(212,175,55,.25);transition:transform .08s}
@@ -38,7 +27,7 @@
   .tab{display:none}
   .tab.on{display:block}
 
-  .card{background:linear-gradient(160deg,#161616,#0c0c0c);border:1px solid #2a2508;padding:14px;border-radius:16px;margin:10px 0;box-shadow:0 6px 18px rgba(0,0,0,.6)}
+  .card{background:linear-gradient(160deg,#121212,#070707);border:1px solid #2a2508;padding:14px;border-radius:16px;margin:10px 0;box-shadow:0 6px 18px rgba(0,0,0,.7)}
   .row{display:flex;gap:8px;align-items:center}
   .row button{width:auto;padding:8px 12px;margin:0}
   .grow{flex:1;word-break:break-word}
@@ -46,14 +35,15 @@
   .del{background:#3a1212;color:#f0a9a9;box-shadow:none;border:1px solid #5a2222}
   .ed{background:#1a1a1a;color:var(--gold);box-shadow:none;border:1px solid #3a3210}
   .card .del{width:auto;padding:8px 14px;margin:8px 0 0 0}
-  .bar{height:10px;background:#1a1a1a;border-radius:6px;overflow:hidden;margin-top:10px}
+  .bar{height:10px;background:#141414;border-radius:6px;overflow:hidden;margin-top:10px}
   .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:0;transition:width .4s}
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(5,5,5,.94);border-top:1px solid #2a2508;backdrop-filter:blur(6px)}
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(0,0,0,.94);border-top:1px solid #2a2508;backdrop-filter:blur(6px)}
   .nav button{flex:1;border-radius:0;margin:0;background:none;color:var(--mut);box-shadow:none;padding:14px 0;font-size:10px;font-weight:500}
   .nav button.on{color:var(--gold2);background:none}
   .st{margin:10px 0;color:var(--gold2);font-size:14px}
+  .hint{color:var(--mut);font-size:12px;margin:0 0 4px}
 
-  #splash{position:fixed;inset:0;background:#050505;z-index:99;overflow:hidden;transition:opacity .6s}
+  #splash{position:fixed;inset:0;background:#000;z-index:99;overflow:hidden;transition:opacity .6s}
   #splash.hide{opacity:0;pointer-events:none}
   .skip{position:fixed;top:14px;right:14px;width:auto;padding:8px 14px;font-size:13px;z-index:100;background:rgba(255,255,255,.08);color:var(--gold2);box-shadow:none;border:1px solid rgba(212,175,55,.4)}
   .ic{position:absolute;left:50%;top:45%;margin:-16px 0 0 -16px;font-size:26px;opacity:0;animation:gather 6s ease-in-out forwards}
@@ -73,7 +63,7 @@
   .tag{position:absolute;left:0;right:0;top:80%;text-align:center;color:var(--silver);font-size:15px;letter-spacing:1px;opacity:0;animation:tagIn .9s ease 6.2s forwards}
   @keyframes tagIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-  #welcome{position:fixed;inset:0;background:#050505;z-index:98;display:none;align-items:center;justify-content:center;padding:28px}
+  #welcome{position:fixed;inset:0;background:#000;z-index:98;display:none;align-items:center;justify-content:center;padding:28px}
   .wbox{width:100%;max-width:360px;text-align:center}
   .wlogo{font-size:40px;font-weight:800;letter-spacing:6px;color:var(--gold2);text-shadow:0 0 16px rgba(212,175,55,.6);margin-bottom:26px}
   .wq{font-size:22px;color:var(--txt);margin-bottom:18px;letter-spacing:.3px;min-height:30px}
@@ -83,11 +73,8 @@
 </head>
 <body>
 
-<div class="light l1"></div>
-<div class="light l2"></div>
-<div class="light l3"></div>
-<div class="light l4"></div>
-<div class="frame"></div>
+<div class="glow g1"></div>
+<div class="glow g2"></div>
 
 <div id="splash">
   <button id="skip" class="skip">Skip</button>
@@ -112,6 +99,19 @@
 
 <div id="mainwrap">
 <div id="t-dash" class="tab on">
+  <svg class="badge" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <path id="bp" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/>
+      <linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3c4"/><stop offset="1" stop-color="#b8902a"/></linearGradient>
+    </defs>
+    <circle cx="100" cy="100" r="98" fill="#000" stroke="#e8edf2" stroke-width="2.5"/>
+    <circle cx="100" cy="100" r="88" fill="#000" stroke="#e8edf2" stroke-width="1"/>
+    <text font-family="sans-serif" font-size="13" font-weight="700" letter-spacing="3" fill="#ffffff">
+      <textPath href="#bp" startOffset="25%" text-anchor="middle">KR CREATOR STUDIO</textPath>
+    </text>
+    <circle cx="100" cy="100" r="58" fill="#050505" stroke="url(#gg)" stroke-width="3"/>
+    <text x="100" y="116" text-anchor="middle" font-family="sans-serif" font-size="44" font-weight="800" fill="url(#gg)">KR</text>
+  </svg>
   <h2 id="hi">Dashboard</h2>
   <div class="card">Aaj ke goals: <b id="d1">0</b></div>
   <div class="card">Aaj ke pure hue: <b id="d2">0</b>
@@ -278,22 +278,23 @@ document.addEventListener('click', function(ev){
   }
 });
 
-/* ---------- swipe between tabs ---------- */
-var wrapEl = $('mainwrap');
+/* ---------- swipe anywhere on screen to change tab ---------- */
 var sx = 0, sy = 0, sdx = 0, mode = null, tracking = false;
 function activeEl(){ return $('t-' + curTab); }
-wrapEl.addEventListener('touchstart', function(e){
+document.addEventListener('touchstart', function(e){
   var t = e.target;
-  if(t.closest && t.closest('input,select,textarea,button,label')){ tracking = false; return; }
+  if(!e.touches || e.touches.length !== 1 || (t.closest && t.closest('input,select,textarea,label'))){
+    tracking = false; return;
+  }
   tracking = true; mode = null; sdx = 0;
   sx = e.touches[0].clientX; sy = e.touches[0].clientY;
 }, {passive:true});
-wrapEl.addEventListener('touchmove', function(e){
-  if(!tracking) return;
+document.addEventListener('touchmove', function(e){
+  if(!tracking || !e.touches || e.touches.length !== 1) return;
   var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
   if(mode === null){
-    if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-    mode = Math.abs(dx) > Math.abs(dy) * 1.3 ? 'h' : 'v';
+    if(Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    mode = Math.abs(dx) > Math.abs(dy) * 1.5 ? 'h' : 'v';
   }
   if(mode !== 'h') return;
   sdx = dx;
@@ -307,7 +308,7 @@ function endSwipe(){
   tracking = false;
   var idx = ORDER.indexOf(curTab);
   var go = 0;
-  if(sdx < -60) go = 1; else if(sdx > 60) go = -1;
+  if(sdx < -50) go = 1; else if(sdx > 50) go = -1;
   if(go !== 0 && ORDER[idx + go]){
     whoosh();
     goTab(ORDER[idx + go], go);
@@ -319,8 +320,8 @@ function endSwipe(){
   }
   mode = null;
 }
-wrapEl.addEventListener('touchend', endSwipe, {passive:true});
-wrapEl.addEventListener('touchcancel', endSwipe, {passive:true});
+document.addEventListener('touchend', endSwipe, {passive:true});
+document.addEventListener('touchcancel', endSwipe, {passive:true});
 
 function goTab(name, dir){
   show(name);
@@ -767,4 +768,4 @@ if(localStorage.getItem('introSeen')){
 }
 </script>
 </body>
-    </html>
+                            </html>
