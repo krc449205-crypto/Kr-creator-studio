@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KR Creator Studio</title>
 <style>
-  @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
   :root{--gold:#d4af37;--gold2:#f3d77a;--silver:#e8edf2;--bg:#000;--txt:#f5f0e1;--mut:#8f8a7a}
   *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
   html,body{height:100%}
@@ -24,6 +23,8 @@
   textarea{height:110px;font-size:13px}
   button{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111;border:none;font-weight:600;box-shadow:0 4px 14px rgba(212,175,55,.25);transition:transform .15s ease,box-shadow .15s ease}
   button:active{transform:scale(.97)}
+  .ghost{background:transparent;color:var(--gold2);border:1px solid rgba(212,175,55,.4);box-shadow:none}
+  .gear{position:fixed;top:12px;right:12px;width:auto;margin:0;padding:8px 12px;border-radius:50%;font-size:18px;z-index:45;background:rgba(20,20,20,.9);color:var(--gold2);border:1px solid rgba(212,175,55,.45);box-shadow:0 0 12px rgba(212,175,55,.2)}
 
   .tab{display:none}
   .tab.on{display:block}
@@ -32,10 +33,10 @@
   @keyframes fromR{from{opacity:0;transform:translate3d(42px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
   @keyframes fromL{from{opacity:0;transform:translate3d(-42px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 
-  /* profile row: DP left, name right */
   .prof{display:flex;align-items:center;gap:16px;margin:6px 0 10px}
   .dp{position:relative;flex:0 0 104px;width:104px;height:104px;border-radius:50%;overflow:hidden;box-shadow:0 0 22px rgba(168,85,247,.25)}
   .dp::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from var(--a),#f3d77a,#22d3ee,#a855f7,#f43f5e,#f3d77a);animation:spin 4s linear infinite,hue 12s linear infinite}
+  @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
   @keyframes spin{to{--a:360deg}}
   @keyframes hue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
   .dp .in{position:absolute;inset:4px;border-radius:50%;background:#0c0c0c;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:var(--gold2)}
@@ -66,6 +67,20 @@
   .nav button{flex:1;border-radius:0;margin:0;background:none;color:var(--mut);box-shadow:none;padding:14px 0;font-size:10px;font-weight:500}
   .nav button.on{color:var(--gold2);background:none}
   .st{margin:10px 0;color:var(--gold2);font-size:14px}
+
+  /* PIN lock screen */
+  #lock{position:fixed;inset:0;background:#000;z-index:150;display:none;align-items:center;justify-content:center;padding:24px}
+  .lbox{width:100%;max-width:340px;text-align:center}
+  .lk-title{font-size:22px;font-weight:700;color:var(--gold2);letter-spacing:1px;margin-bottom:6px}
+  .lk-sub{color:var(--mut);font-size:13px;margin-bottom:22px}
+  .dots{display:flex;justify-content:center;gap:16px;margin-bottom:12px}
+  .dots span{width:16px;height:16px;border-radius:50%;border:2px solid var(--gold);background:transparent;transition:background .15s ease}
+  .dots span.on{background:var(--gold2);box-shadow:0 0 10px rgba(212,175,55,.6)}
+  .lk-msg{min-height:20px;color:#fca5a5;font-size:13px;margin-bottom:10px}
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .pad button{margin:0;padding:0;height:70px;border-radius:50%;font-size:24px;font-weight:700;background:linear-gradient(160deg,#1a1a1a,#080808);color:var(--txt);border:1px solid rgba(212,175,55,.35);box-shadow:0 4px 14px rgba(0,0,0,.6)}
+  .pad button.blank{visibility:hidden}
+  .pad button.back{font-size:20px;color:var(--gold2)}
 
   #splash{position:fixed;inset:0;background:#000;z-index:99;overflow:hidden;transition:opacity .6s ease}
   #splash.hide{opacity:0;pointer-events:none}
@@ -100,6 +115,23 @@
 <div class="glow g1"></div>
 <div class="glow g2"></div>
 
+<button id="gear" class="gear" title="Settings">⚙</button>
+
+<div id="lock">
+  <div class="lbox">
+    <div class="lk-title">KR STUDIO</div>
+    <div class="lk-sub">Apna 4 digit PIN daalo</div>
+    <div class="dots"><span id="dt0"></span><span id="dt1"></span><span id="dt2"></span><span id="dt3"></span></div>
+    <div id="lkMsg" class="lk-msg"></div>
+    <div class="pad">
+      <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+      <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+      <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+      <button class="blank"></button><button data-k="0">0</button><button data-k="<" class="back">⌫</button>
+    </div>
+  </div>
+</div>
+
 <div id="splash">
   <button id="skip" class="skip">Skip</button>
   <div class="ic" style="--x:-120px;--y:-170px;animation-delay:0s">🎯</div>
@@ -122,6 +154,7 @@
 </div>
 
 <div id="mainwrap">
+
 <div id="t-dash" class="tab on">
   <h2 id="hi">Dashboard</h2>
 
@@ -214,36 +247,7 @@
 <div id="t-more" class="tab">
   <h2>More</h2>
 
-  <h3>Mera profile</h3>
-  <input id="dpFile" type="file" accept="image/*">
-  <input id="pMsgIn" placeholder="Aaj ka message (jaise All the best)">
-  <input id="pGoalIn" placeholder="Mera goal (jaise 1000 subscribers)">
-  <input id="pMotIn" placeholder="Motivation line (jaise Aaj ek kadam aur)">
-  <button id="pSave">Profile save karo</button>
-  <button id="dpClear" class="del">DP hatao</button>
-  <div id="pSt" class="st"></div>
-
-  <h3>Settings</h3>
-  <input id="cname" placeholder="Aapka naam (Dashboard pe dikhega)">
-  <select id="cstart">
-    <option value="dash">App Dashboard se khule</option>
-    <option value="goals">App Goals se khule</option>
-    <option value="plan">App Plan se khule</option>
-    <option value="routine">App Routine se khule</option>
-  </select>
-  <button id="sset">Settings save karo</button>
-  <div id="sett" class="st"></div>
-
-  <h3>30 minute ka reminder</h3>
-  <select id="repOn">
-    <option value="off">Band</option>
-    <option value="on">Chalu</option>
-  </select>
-  <input id="repStart" type="time" value="12:00">
-  <input id="repEnd" type="time" value="22:00">
-  <input id="repMsg" placeholder="Message (jaise: Ab kaam par lautiye)">
-  <button id="repSave">30 min reminder save karo</button>
-  <div id="repSt" class="st"></div>
+  <button id="openSet" class="ghost">⚙ Settings kholo (PIN, profile, naam, 30 min reminder)</button>
 
   <h3>Reminders</h3>
   <div id="nstat" class="st">Notification: check ho raha hai...</div>
@@ -267,6 +271,51 @@
   <input id="rtxt" placeholder="Sab data delete karne ke liye RESET likho">
   <button id="rbtn" class="del">Sab data delete karo</button>
 </div>
+
+<div id="t-settings" class="tab">
+  <h2>Settings</h2>
+  <button id="backDash" class="ghost">← Dashboard par wapas</button>
+
+  <h3>PIN lock (identity safe)</h3>
+  <div id="pinSt" class="st">PIN: abhi lagaya nahi hai</div>
+  <input id="pinNew" type="password" inputmode="numeric" maxlength="4" placeholder="Naya 4 digit PIN">
+  <input id="pinOld" type="password" inputmode="numeric" maxlength="4" placeholder="Purana PIN (badalne ya hatane ke liye)">
+  <button id="pinSave">PIN lagao / badlo</button>
+  <button id="pinOff" class="del">PIN hatao</button>
+  <button id="pinNow">Abhi lock karo</button>
+
+  <h3>Mera profile</h3>
+  <input id="dpFile" type="file" accept="image/*">
+  <input id="pMsgIn" placeholder="Aaj ka message (jaise All the best)">
+  <input id="pGoalIn" placeholder="Mera goal (jaise 1000 subscribers)">
+  <input id="pMotIn" placeholder="Motivation line (jaise Aaj ek kadam aur)">
+  <button id="pSave">Profile save karo</button>
+  <button id="dpClear" class="del">DP hatao</button>
+  <div id="pSt" class="st"></div>
+
+  <h3>Naam aur shuru ka tab</h3>
+  <input id="cname" placeholder="Aapka naam (Dashboard pe dikhega)">
+  <select id="cstart">
+    <option value="dash">App Dashboard se khule</option>
+    <option value="goals">App Goals se khule</option>
+    <option value="plan">App Plan se khule</option>
+    <option value="routine">App Routine se khule</option>
+  </select>
+  <button id="sset">Settings save karo</button>
+  <div id="sett" class="st"></div>
+
+  <h3>30 minute ka reminder</h3>
+  <select id="repOn">
+    <option value="off">Band</option>
+    <option value="on">Chalu</option>
+  </select>
+  <input id="repStart" type="time" value="12:00">
+  <input id="repEnd" type="time" value="22:00">
+  <input id="repMsg" placeholder="Message (jaise: Ab kaam par lautiye)">
+  <button id="repSave">30 min reminder save karo</button>
+  <div id="repSt" class="st"></div>
+</div>
+
 </div>
 
 <div class="nav">
@@ -292,9 +341,86 @@ function profSet(o){ localStorage.setItem('prof', JSON.stringify(o)); }
 function card(inner){ var c = document.createElement('div'); c.className = 'card'; c.appendChild(inner); return c; }
 var KEYS = ['goals','subs','likes','plan','rem','routine','rlog'];
 var ORDER = ['dash','goals','subs','likes','plan','routine','more'];
+var ALLTABS = ORDER.concat(['settings']);
 var curTab = 'dash';
 
-/* ---------- soft click sound + light vibration ---------- */
+/* ---------- PIN lock ---------- */
+var locked = false;
+var lockBuf = '';
+function getPin(){ return localStorage.getItem('pin') || ''; }
+function pinHash(p){
+  var h = 5381;
+  for(var i = 0; i < p.length; i++){ h = ((h << 5) + h) + p.charCodeAt(i); h = h & 0x7fffffff; }
+  return 'p' + h + ':' + p.length;
+}
+function drawDots(){
+  for(var i = 0; i < 4; i++){
+    var d = $('dt' + i);
+    if(d) d.className = (i < lockBuf.length) ? 'on' : '';
+  }
+}
+function showLock(){
+  if(!getPin()) return;
+  locked = true;
+  lockBuf = '';
+  drawDots();
+  $('lkMsg').textContent = '';
+  $('lock').style.display = 'flex';
+}
+function hideLock(){
+  locked = false;
+  lockBuf = '';
+  $('lock').style.display = 'none';
+}
+function pressKey(k){
+  if(k === '<'){ lockBuf = lockBuf.slice(0, -1); }
+  else if(lockBuf.length < 4){ lockBuf += k; }
+  drawDots();
+  if(lockBuf.length === 4){
+    if(pinHash(lockBuf) === getPin()){
+      hideLock();
+    } else {
+      $('lkMsg').textContent = 'PIN galat hai, dobara try karo';
+      setTimeout(function(){ lockBuf = ''; drawDots(); }, 250);
+    }
+  }
+}
+document.querySelectorAll('#lock .pad button[data-k]').forEach(function(b){
+  b.addEventListener('click', function(){ pressKey(b.getAttribute('data-k')); });
+});
+document.addEventListener('visibilitychange', function(){
+  if(!document.hidden && getPin()) showLock();
+});
+function pinSay(t){ $('pinSt').textContent = t; }
+function drawPinState(){
+  pinSay(getPin() ? 'PIN lagaa hua hai. App kholne par PIN maangega.' : 'PIN abhi lagaya nahi hai');
+}
+function pinIsValidNew(p){ return /^[0-9]{4}$/.test(p); }
+$('pinSave').onclick = function(){
+  var nw = $('pinNew').value.trim();
+  var old = $('pinOld').value.trim();
+  if(!pinIsValidNew(nw)){ pinSay('Naya PIN theek 4 digit ka hona chahiye (sirf numbers)'); return; }
+  if(getPin() && pinHash(old) !== getPin()){ pinSay('Purana PIN galat hai'); return; }
+  localStorage.setItem('pin', pinHash(nw));
+  $('pinNew').value = ''; $('pinOld').value = '';
+  drawPinState();
+  pinSay('PIN save ho gaya. Ab app PIN maangega.');
+};
+$('pinOff').onclick = function(){
+  var old = $('pinOld').value.trim();
+  if(!getPin()){ pinSay('PIN pehle se lagaa nahi hai'); return; }
+  if(pinHash(old) !== getPin()){ pinSay('PIN hatane ke liye sahi purana PIN likho'); return; }
+  localStorage.removeItem('pin');
+  $('pinOld').value = '';
+  drawPinState();
+  pinSay('PIN hata diya gaya');
+};
+$('pinNow').onclick = function(){
+  if(!getPin()){ pinSay('Pehle PIN lagao'); return; }
+  showLock();
+};
+
+/* ---------- sounds ---------- */
 var AC = null;
 function clickSound(){
   try{
@@ -314,19 +440,19 @@ document.addEventListener('click', function(ev){
   }
 });
 
-/* ---------- swipe anywhere on screen to change tab ---------- */
+/* ---------- swipe between main tabs (Settings mein swipe nahi) ---------- */
 var sx = 0, sy = 0, sdx = 0, mode = null, tracking = false;
 function activeEl(){ return $('t-' + curTab); }
 document.addEventListener('touchstart', function(e){
   var t = e.target;
-  if(!e.touches || e.touches.length !== 1 || (t.closest && t.closest('input,select,textarea,label'))){
+  if(locked || curTab === 'settings' || !e.touches || e.touches.length !== 1 || (t.closest && t.closest('input,select,textarea,label'))){
     tracking = false; return;
   }
   tracking = true; mode = null; sdx = 0;
   sx = e.touches[0].clientX; sy = e.touches[0].clientY;
 }, {passive:true});
 document.addEventListener('touchmove', function(e){
-  if(!tracking || !e.touches || e.touches.length !== 1) return;
+  if(!tracking || locked || !e.touches || e.touches.length !== 1) return;
   var dx = e.touches[0].clientX - sx, dy = e.touches[0].clientY - sy;
   if(mode === null){
     if(Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
@@ -403,13 +529,15 @@ $('wgo').onclick = function(){
   }, 2000);
 };
 
-/* ---------- tabs (smooth) ---------- */
+/* ---------- tabs ---------- */
 function show(name, dir){
   curTab = name;
-  ORDER.forEach(function(n){
+  ALLTABS.forEach(function(n){
     var t = $('t-' + n);
     t.classList.remove('on','fromR','fromL');
     t.style.transition = ''; t.style.transform = ''; t.style.opacity = '';
+  });
+  ORDER.forEach(function(n){
     $('n-' + n).className = (n === name ? 'on' : '');
   });
   var nw = $('t-' + name);
@@ -425,15 +553,19 @@ function show(name, dir){
   if(name === 'likes') drawLikes();
   if(name === 'plan') drawPlan();
   if(name === 'routine') drawRoutine();
-  if(name === 'more'){ drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch(); }
+  if(name === 'more'){ drawRem(); drawAch(); }
+  if(name === 'settings'){ drawSettings(); drawProfForm(); drawRepForm(); drawPinState(); }
 }
 ORDER.forEach(function(n){ $('n-' + n).onclick = function(){
   if(n === curTab) return;
   var dir = ORDER.indexOf(n) > ORDER.indexOf(curTab) ? 1 : -1;
   show(n, dir);
 }; });
+$('gear').onclick = function(){ show('settings', 0); };
+$('openSet').onclick = function(){ show('settings', 0); };
+$('backDash').onclick = function(){ show('dash', 0); };
 
-/* ---------- profile (DP + message + goal + motivation) ---------- */
+/* ---------- profile ---------- */
 function drawProfile(){
   var p = profGet(); var s = loadSet();
   $('pName').textContent = s.name || 'Creator';
@@ -494,7 +626,7 @@ $('pSave').onclick = function(){
   $('pSt').textContent = 'Profile save ho gaya';
 };
 
-/* ---------- settings ---------- */
+/* ---------- settings (naam + start tab) ---------- */
 function drawSettings(){
   var s = loadSet();
   $('cname').value = s.name || '';
@@ -977,6 +1109,7 @@ if(localStorage.getItem('introSeen')){
 } else {
   introT = setTimeout(endIntro, 9300);
 }
+if(getPin()) showLock();
 </script>
 </body>
-                                    </html>
+        </html>
