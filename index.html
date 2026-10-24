@@ -68,21 +68,31 @@
   .nav button.on{color:var(--gold2);background:none}
   .st{margin:10px 0;color:var(--gold2);font-size:14px}
 
-  /* ---------- PIN lock (iPhone jaisa look) ---------- */
-  #lock{position:fixed;inset:0;background:#000;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;--kc:#22d3ee}
+  /* ---------- PIN lock (stylish) ---------- */
+  #lock{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;--kc:#22d3ee;
+    background:radial-gradient(ellipse at 50% 12%,rgba(34,211,238,.10),transparent 55%),radial-gradient(ellipse at 50% 100%,rgba(168,85,247,.12),transparent 60%),#000}
   .lbox{width:100%;max-width:340px;text-align:center}
-  .lk-title{font-size:20px;font-weight:300;color:#9a9a9a;letter-spacing:.5px;margin-bottom:34px}
-  .dots{display:flex;justify-content:center;gap:22px;margin-bottom:14px}
-  .dots span{width:13px;height:13px;border-radius:50%;border:1.5px solid #8a8a8a;background:transparent;transition:all .2s ease}
-  .dots span.on{background:var(--kc);border-color:var(--kc);box-shadow:0 0 10px var(--kc)}
-  .lk-msg{min-height:20px;color:#fca5a5;font-size:13px;margin-bottom:18px}
-  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:20px 22px;justify-items:center}
-  .pad button{width:82px;height:82px;margin:0;padding:0;border-radius:50%;background:transparent;border:1.5px solid #5a5a5a;color:#d0d0d0;font-size:32px;font-weight:300;line-height:1;box-shadow:none;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .25s ease}
-  .pad button .sub{font-size:10px;letter-spacing:2px;color:#7a7a7a;margin-top:3px;font-weight:400}
+  .lk-logo{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:1px;color:#0b0b0b;background:linear-gradient(135deg,#f3d77a,#d4af37);box-shadow:0 0 22px rgba(212,175,55,.45)}
+  .lk-title{font-size:14px;font-weight:300;color:#c4c4c4;letter-spacing:1.5px;margin-bottom:24px;text-transform:uppercase}
+  .dots{display:flex;justify-content:center;gap:20px;margin-bottom:12px}
+  .dots span{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);transition:background .2s,box-shadow .2s,border-color .2s}
+  .dots span.on{background:var(--kc);border-color:var(--kc);box-shadow:0 0 12px var(--kc)}
+  .lk-msg{min-height:20px;color:#fca5a5;font-size:13px;margin-bottom:14px}
+  .pad{display:grid;grid-template-columns:repeat(3,84px);gap:18px 22px;justify-content:center}
+  .pad button{width:84px;height:84px;margin:0;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.14);
+    background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.14),rgba(255,255,255,.02) 60%,rgba(0,0,0,.25));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 16px rgba(0,0,0,.6);color:#f5f5f5;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+    transition:border-color .18s,box-shadow .18s,transform .12s}
+  .pad button .n{font-size:30px;font-weight:300;line-height:1}
+  .pad button .l{font-size:9px;letter-spacing:2px;color:#8a8a8a;margin-top:4px;height:10px}
   .pad button.blank{visibility:hidden}
-  .pad button.back{border:none;font-size:22px;color:#bdbdbd;background:transparent}
-  .pad button.glow{border-color:var(--kc);color:var(--kc);box-shadow:0 0 24px var(--kc),inset 0 0 14px var(--kc);background:radial-gradient(circle,rgba(255,255,255,.05),transparent)}
-  .pad button.glow .sub{color:var(--kc)}
+  .pad button.back{background:transparent;border:none;box-shadow:none;color:#cfcfcf}
+  .pad button.back .n{font-size:22px}
+  .pad button.glow{border-color:var(--kc);box-shadow:0 0 22px var(--kc),inset 0 0 12px var(--kc);transform:scale(.95)}
+  .pad button.glow .n{color:var(--kc)}
+  .lk-cancel{display:none;width:auto;margin:22px auto 0;padding:8px 18px;background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold2);box-shadow:none;border-radius:20px;font-size:13px;font-weight:500}
 
   #splash{position:fixed;inset:0;background:#000;z-index:99;overflow:hidden;transition:opacity .6s ease}
   #splash.hide{opacity:0;pointer-events:none}
@@ -121,23 +131,25 @@
 
 <div id="lock">
   <div class="lbox">
-    <div class="lk-title">Enter PIN</div>
+    <div class="lk-logo">KR</div>
+    <div class="lk-title" id="lkTitle">Apna PIN daalo</div>
     <div class="dots"><span id="dt0"></span><span id="dt1"></span><span id="dt2"></span><span id="dt3"></span></div>
     <div id="lkMsg" class="lk-msg"></div>
     <div class="pad">
-      <button data-k="1">1<span class="sub">&nbsp;</span></button>
-      <button data-k="2">2<span class="sub">ABC</span></button>
-      <button data-k="3">3<span class="sub">DEF</span></button>
-      <button data-k="4">4<span class="sub">GHI</span></button>
-      <button data-k="5">5<span class="sub">JKL</span></button>
-      <button data-k="6">6<span class="sub">MNO</span></button>
-      <button data-k="7">7<span class="sub">PQRS</span></button>
-      <button data-k="8">8<span class="sub">TUV</span></button>
-      <button data-k="9">9<span class="sub">WXYZ</span></button>
-      <button class="blank"></button>
-      <button data-k="0">0<span class="sub">&nbsp;</span></button>
-      <button data-k="<" class="back">⌫</button>
+      <button data-k="1"><span class="n">1</span><span class="l"></span></button>
+      <button data-k="2"><span class="n">2</span><span class="l">ABC</span></button>
+      <button data-k="3"><span class="n">3</span><span class="l">DEF</span></button>
+      <button data-k="4"><span class="n">4</span><span class="l">GHI</span></button>
+      <button data-k="5"><span class="n">5</span><span class="l">JKL</span></button>
+      <button data-k="6"><span class="n">6</span><span class="l">MNO</span></button>
+      <button data-k="7"><span class="n">7</span><span class="l">PQRS</span></button>
+      <button data-k="8"><span class="n">8</span><span class="l">TUV</span></button>
+      <button data-k="9"><span class="n">9</span><span class="l">WXYZ</span></button>
+      <button class="blank" tabindex="-1"></button>
+      <button data-k="0"><span class="n">0</span><span class="l"></span></button>
+      <button data-k="<" class="back"><span class="n">⌫</span></button>
     </div>
+    <button id="lkCancel" class="lk-cancel">Cancel</button>
   </div>
 </div>
 
@@ -273,12 +285,12 @@
   <h3>Backup (export / import)</h3>
   <button id="expb">Export banao</button>
   <textarea id="exp" placeholder="Export yahan dikhega. Copy karke safe jagah save karo."></textarea>
-  <button id="impb">Import karo (upar wala text paste karke)</button>
+  <button id="impb">Import karo (PIN maangega)</button>
   <div id="ist" class="st"></div>
 
   <h3>Reset</h3>
   <input id="rtxt" placeholder="Sab data delete karne ke liye RESET likho">
-  <button id="rbtn" class="del">Sab data delete karo</button>
+  <button id="rbtn" class="del">Sab data delete karo (PIN maangega)</button>
 </div>
 
 <div id="t-settings" class="tab">
@@ -348,6 +360,7 @@ function loadSet(){ try{ return JSON.parse(localStorage.getItem('settings') || '
 function profGet(){ try{ return JSON.parse(localStorage.getItem('prof') || '{}'); }catch(e){ return {}; } }
 function profSet(o){ localStorage.setItem('prof', JSON.stringify(o)); }
 function card(inner){ var c = document.createElement('div'); c.className = 'card'; c.appendChild(inner); return c; }
+function vib(p){ if(navigator.vibrate) navigator.vibrate(p); }
 var KEYS = ['goals','subs','likes','plan','rem','routine','rlog'];
 var ORDER = ['dash','goals','subs','likes','plan','routine','more'];
 var ALLTABS = ORDER.concat(['settings']);
@@ -371,7 +384,6 @@ function tone(freq, dur, when, vol){
 function clickSound(){ tone(880, 0.07, 0, 0.06); }
 var DIGIT_FREQ = [523, 587, 659, 698, 784, 880, 988, 1047, 1175, 1319];
 function keyTone(k){ var n = parseInt(k, 10); if(isNaN(n)) return; tone(DIGIT_FREQ[n], 0.22, 0, 0.12); }
-function chime(){ tone(523, 0.3, 0, 0.12); tone(659, 0.3, 0.15, 0.12); tone(784, 0.45, 0.3, 0.12); }
 function welcomeVoice(){
   try{
     if('speechSynthesis' in window){
@@ -384,19 +396,22 @@ function welcomeVoice(){
       return;
     }
   }catch(e){}
-  chime();
+  tone(523, 0.3, 0, 0.12); tone(659, 0.3, 0.15, 0.12); tone(784, 0.45, 0.3, 0.12);
 }
 document.addEventListener('click', function(ev){
   if(ev.target.closest && ev.target.closest('#lock')) return;
   if(ev.target.closest && ev.target.closest('button')){
     clickSound();
-    if(navigator.vibrate) navigator.vibrate(10);
+    vib(10);
   }
 });
 
 /* ---------- PIN lock ---------- */
 var locked = false;
+var lockMode = 'unlock';
+var verifyCb = null;
 var lockBuf = '';
+var busy = false;
 var KCOL = ['#22d3ee','#a855f7','#f43f5e','#f3d77a','#22c55e','#3b82f6','#f97316'];
 function getPin(){ return localStorage.getItem('pin') || ''; }
 function pinHash(p){
@@ -410,49 +425,83 @@ function drawDots(){
     if(d) d.className = (i < lockBuf.length) ? 'on' : '';
   }
 }
-function showLock(){
-  if(!getPin()) return;
+function openLock(mode, title, cb){
+  lockMode = mode;
+  verifyCb = cb || null;
+  lockBuf = ''; busy = false;
   locked = true;
-  lockBuf = '';
-  drawDots();
+  $('lkTitle').textContent = title || 'Apna PIN daalo';
+  $('lkCancel').style.display = (mode === 'verify') ? 'inline-block' : 'none';
   $('lkMsg').textContent = '';
+  $('lock').style.setProperty('--kc', '#22d3ee');
+  drawDots();
   $('lock').style.display = 'flex';
 }
-function hideLock(){
+function closeLock(){
   locked = false;
-  lockBuf = '';
+  lockBuf = ''; busy = false;
   $('lock').style.display = 'none';
 }
+function showLock(){
+  if(!getPin()) return;
+  openLock('unlock', 'Apna PIN daalo');
+}
+function glowKey(k){
+  var btn = document.querySelector('#lock .pad button[data-k="' + k + '"]');
+  if(!btn) return;
+  $('lock').style.setProperty('--kc', KCOL[Math.floor(Math.random() * KCOL.length)]);
+  btn.classList.add('glow');
+  setTimeout(function(){ btn.classList.remove('glow'); }, 260);
+}
 function pressKey(k){
+  if(busy) return;
   if(k === '<'){ lockBuf = lockBuf.slice(0, -1); drawDots(); return; }
   if(lockBuf.length >= 4) return;
-  var col = KCOL[Math.floor(Math.random() * KCOL.length)];
-  $('lock').style.setProperty('--kc', col);
-  var btn = document.querySelector('#lock .pad button[data-k="' + k + '"]');
-  if(btn){
-    btn.classList.add('glow');
-    setTimeout(function(){ btn.classList.remove('glow'); }, 420);
-  }
-  keyTone(k);
-  if(navigator.vibrate) navigator.vibrate(8);
   lockBuf += k;
   drawDots();
+  keyTone(k);
+  vib(8);
   if(lockBuf.length === 4){
-    if(pinHash(lockBuf) === getPin()){
-      welcomeVoice();
-      setTimeout(hideLock, 350);
-    } else {
-      $('lkMsg').textContent = 'PIN galat hai, dobara try karo';
-      if(navigator.vibrate) navigator.vibrate([40, 60, 40]);
-      setTimeout(function(){ lockBuf = ''; drawDots(); }, 350);
-    }
+    busy = true;
+    var typed = lockBuf;
+    setTimeout(function(){
+      busy = false;
+      if(pinHash(typed) === getPin()){
+        if(lockMode === 'verify'){
+          var cb = verifyCb;
+          closeLock();
+          if(cb) cb();
+        } else {
+          welcomeVoice();
+          closeLock();
+        }
+      } else {
+        $('lkMsg').textContent = 'PIN galat hai, dobara try karo';
+        vib([40, 60, 40]);
+        lockBuf = ''; drawDots();
+      }
+    }, 180);
   }
 }
+/* touchstart par pakdo (click ka wait nahi), duplicate event rokne ke liye preventDefault */
 document.querySelectorAll('#lock .pad button[data-k]').forEach(function(b){
-  b.addEventListener('click', function(){ pressKey(b.getAttribute('data-k')); });
+  var k = b.getAttribute('data-k');
+  b.addEventListener('touchstart', function(e){
+    if(e.cancelable) e.preventDefault();
+    glowKey(k);
+    pressKey(k);
+  }, {passive:false});
+  b.addEventListener('mousedown', function(){
+    glowKey(k);
+    pressKey(k);
+  });
 });
+$('lkCancel').onclick = function(){
+  verifyCb = null;
+  closeLock();
+};
 document.addEventListener('visibilitychange', function(){
-  if(!document.hidden && getPin()) showLock();
+  if(!document.hidden && getPin() && lockMode !== 'verify') showLock();
 });
 function pinSay(t){ $('pinSt').textContent = t; }
 function drawPinState(){
@@ -1018,7 +1067,7 @@ function drawAch(){
   });
 }
 
-/* ---------- backup ---------- */
+/* ---------- backup (import PIN ke bina nahi) ---------- */
 $('expb').onclick = function(){
   var o = {};
   KEYS.forEach(function(k){ o[k] = load(k); });
@@ -1028,7 +1077,7 @@ $('expb').onclick = function(){
   $('exp').value = JSON.stringify(o);
   $('ist').textContent = 'Export ho gaya. Text copy karke safe jagah save karo.';
 };
-$('impb').onclick = function(){
+function doImport(){
   var o;
   try{ o = JSON.parse($('exp').value); }catch(e){ $('ist').textContent = 'Galat text hai, sahi export paste karo'; return; }
   if(!o || typeof o !== 'object'){ $('ist').textContent = 'Galat text hai'; return; }
@@ -1039,9 +1088,14 @@ $('impb').onclick = function(){
   $('ist').textContent = 'Import ho gaya';
   applySettings(); drawDash(); drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch();
   applyRep();
+}
+$('impb').onclick = function(){
+  if(getPin()){ openLock('verify', 'Import ke liye PIN daalo', doImport); return; }
+  doImport();
 };
-$('rbtn').onclick = function(){
-  if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
+
+/* ---------- reset (PIN ke bina nahi) ---------- */
+function doReset(){
   KEYS.forEach(function(k){ localStorage.removeItem(k); });
   localStorage.removeItem('settings');
   localStorage.removeItem('rep');
@@ -1050,6 +1104,11 @@ $('rbtn').onclick = function(){
   $('ist').textContent = 'Sab data delete ho gaya';
   applySettings(); drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch();
   applyRep();
+}
+$('rbtn').onclick = function(){
+  if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
+  if(getPin()){ openLock('verify', 'Reset ke liye PIN daalo', doReset); return; }
+  doReset();
 };
 
 /* ---------- dashboard ---------- */
@@ -1155,4 +1214,4 @@ if(localStorage.getItem('introSeen')){
 if(getPin()) showLock();
 </script>
 </body>
-      </html>
+  </html>
