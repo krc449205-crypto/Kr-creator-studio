@@ -68,10 +68,30 @@
   .nav button.on{color:var(--gold2);background:none}
   .st{margin:10px 0;color:var(--gold2);font-size:14px}
 
-  /* ---------- PIN lock (stylish) ---------- */
+  /* ---------- daily promise (vada) ---------- */
+  #promise{position:fixed;inset:0;z-index:160;display:none;align-items:center;justify-content:center;padding:24px;overflow:hidden;
+    background:radial-gradient(ellipse at 50% 10%,rgba(212,175,55,.14),transparent 60%),#000;transition:background .9s ease}
+  #promise.go{background:radial-gradient(circle at 50% 50%,#4ade80,#16a34a 45%,#052e16 100%)}
+  .pbx{position:relative;z-index:2;width:100%;max-width:340px;text-align:center;transition:opacity .4s ease}
+  #promise.go .pbx{opacity:0}
+  .pq{font-size:22px;font-weight:700;color:var(--gold2);margin-bottom:10px;line-height:1.3}
+  .ps{color:var(--mut);font-size:14px;margin-bottom:26px}
+  .pbtn{display:block;width:100%;padding:16px;margin:10px 0;border-radius:16px;font-size:15px;font-weight:700;background:linear-gradient(135deg,#f3d77a,#d4af37);color:#111;border:none;box-shadow:0 6px 20px rgba(212,175,55,.3)}
+  .pbtn.alt{background:transparent;color:var(--gold2);border:1px solid rgba(212,175,55,.45);box-shadow:none}
+  #promise .bd{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;opacity:0;z-index:1}
+  #promise.go .bd{animation:bd 1.1s ease-out forwards}
+  @keyframes bd{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(60)}}
+
+  /* ---------- toast (vada message) ---------- */
+  #toast{position:fixed;top:18px;left:50%;z-index:170;transform:translateX(-50%) translateY(-20px);background:rgba(20,20,20,.96);border:1px solid rgba(212,175,55,.55);color:var(--gold2);padding:12px 18px;border-radius:14px;font-size:14px;opacity:0;transition:all .4s ease;pointer-events:none;max-width:90%;text-align:center;display:none}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---------- PIN lock ---------- */
   #lock{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;--kc:#22d3ee;
     background:radial-gradient(ellipse at 50% 12%,rgba(34,211,238,.10),transparent 55%),radial-gradient(ellipse at 50% 100%,rgba(168,85,247,.12),transparent 60%),#000}
   .lbox{width:100%;max-width:340px;text-align:center}
+  .lbox.shake{animation:shk .35s}
+  @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
   .lk-logo{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:1px;color:#0b0b0b;background:linear-gradient(135deg,#f3d77a,#d4af37);box-shadow:0 0 22px rgba(212,175,55,.45)}
   .lk-title{font-size:14px;font-weight:300;color:#c4c4c4;letter-spacing:1.5px;margin-bottom:24px;text-transform:uppercase}
   .dots{display:flex;justify-content:center;gap:20px;margin-bottom:12px}
@@ -84,13 +104,13 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 16px rgba(0,0,0,.6);color:#f5f5f5;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-    transition:border-color .18s,box-shadow .18s,transform .12s}
-  .pad button .n{font-size:30px;font-weight:300;line-height:1}
-  .pad button .l{font-size:9px;letter-spacing:2px;color:#8a8a8a;margin-top:4px;height:10px}
+    transition:border-color .15s,box-shadow .15s}
+  .pad button .n{font-size:30px;font-weight:300;line-height:1;pointer-events:none}
+  .pad button .l{font-size:9px;letter-spacing:2px;color:#8a8a8a;margin-top:4px;height:10px;pointer-events:none}
   .pad button.blank{visibility:hidden}
   .pad button.back{background:transparent;border:none;box-shadow:none;color:#cfcfcf}
   .pad button.back .n{font-size:22px}
-  .pad button.glow{border-color:var(--kc);box-shadow:0 0 22px var(--kc),inset 0 0 12px var(--kc);transform:scale(.95)}
+  .pad button.glow{border-color:var(--kc);box-shadow:0 0 22px var(--kc),inset 0 0 12px var(--kc)}
   .pad button.glow .n{color:var(--kc)}
   .lk-cancel{display:none;width:auto;margin:22px auto 0;padding:8px 18px;background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold2);box-shadow:none;border-radius:20px;font-size:13px;font-weight:500}
 
@@ -129,13 +149,28 @@
 
 <button id="gear" class="gear" title="Settings">⚙</button>
 
+<div id="toast"></div>
+
+<div id="promise">
+  <div class="bd" style="background:#f3d77a;animation-delay:0s"></div>
+  <div class="bd" style="background:#22d3ee;animation-delay:.08s"></div>
+  <div class="bd" style="background:#f43f5e;animation-delay:.16s"></div>
+  <div class="bd" style="background:#a855f7;animation-delay:.24s"></div>
+  <div class="pbx">
+    <div class="pq">Aaj tum apna kaam poora karoge?</div>
+    <div class="ps">Pehle vada karo, phir app khulega</div>
+    <button id="pY" class="pbtn">Haan, aaj main apna kaam poora karunga</button>
+    <button id="pN" class="pbtn alt">Haan, baad mein poora karunga</button>
+  </div>
+</div>
+
 <div id="lock">
-  <div class="lbox">
+  <div class="lbox" id="lbox">
     <div class="lk-logo">KR</div>
     <div class="lk-title" id="lkTitle">Apna PIN daalo</div>
     <div class="dots"><span id="dt0"></span><span id="dt1"></span><span id="dt2"></span><span id="dt3"></span></div>
     <div id="lkMsg" class="lk-msg"></div>
-    <div class="pad">
+    <div class="pad" id="lockPad">
       <button data-k="1"><span class="n">1</span><span class="l"></span></button>
       <button data-k="2"><span class="n">2</span><span class="l">ABC</span></button>
       <button data-k="3"><span class="n">3</span><span class="l">DEF</span></button>
@@ -366,7 +401,7 @@ var ORDER = ['dash','goals','subs','likes','plan','routine','more'];
 var ALLTABS = ORDER.concat(['settings']);
 var curTab = 'dash';
 
-/* ---------- sound (click + lock tones + welcome) ---------- */
+/* ---------- sound ---------- */
 var AC = null;
 function actx(){ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); return AC; }
 function tone(freq, dur, when, vol){
@@ -399,19 +434,59 @@ function welcomeVoice(){
   tone(523, 0.3, 0, 0.12); tone(659, 0.3, 0.15, 0.12); tone(784, 0.45, 0.3, 0.12);
 }
 document.addEventListener('click', function(ev){
-  if(ev.target.closest && ev.target.closest('#lock')) return;
+  if(ev.target.closest && ev.target.closest('#lock, #promise')) return;
   if(ev.target.closest && ev.target.closest('button')){
     clickSound();
     vib(10);
   }
 });
 
-/* ---------- PIN lock ---------- */
+/* ---------- toast (vada message) ---------- */
+var toastT = null;
+function showToast(msg){
+  var t = $('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(function(){
+    t.classList.remove('show');
+    setTimeout(function(){ t.style.display = 'none'; }, 400);
+  }, 3000);
+}
+
+/* ---------- daily promise (vada) ---------- */
+var promiseOpen = false;
+var promiseBusy = false;
+function needPromise(){ return localStorage.getItem('promiseDay') !== today(); }
+function showPromise(){
+  promiseOpen = true; promiseBusy = false;
+  $('promise').classList.remove('go');
+  $('promise').style.display = 'flex';
+}
+function hidePromise(){
+  promiseOpen = false; promiseBusy = false;
+  $('promise').classList.remove('go');
+  $('promise').style.display = 'none';
+}
+function promiseTap(){
+  if(promiseBusy) return;
+  promiseBusy = true;
+  localStorage.setItem('promiseDay', today());
+  vib([20, 40, 20]);
+  $('promise').classList.add('go');
+  setTimeout(function(){ hidePromise(); flow(); }, 1200);
+}
+$('pY').onclick = promiseTap;
+$('pN').onclick = promiseTap;
+
+/* ---------- PIN lock (roz ek baar) ---------- */
 var locked = false;
 var lockMode = 'unlock';
 var verifyCb = null;
 var lockBuf = '';
 var busy = false;
+var lastTap = 0;
 var KCOL = ['#22d3ee','#a855f7','#f43f5e','#f3d77a','#22c55e','#3b82f6','#f97316'];
 function getPin(){ return localStorage.getItem('pin') || ''; }
 function pinHash(p){
@@ -419,6 +494,7 @@ function pinHash(p){
   for(var i = 0; i < p.length; i++){ h = ((h << 5) + h) + p.charCodeAt(i); h = h & 0x7fffffff; }
   return 'p' + h + ':' + p.length;
 }
+function needLock(){ return !!getPin() && localStorage.getItem('lockDay') !== today(); }
 function drawDots(){
   for(var i = 0; i < 4; i++){
     var d = $('dt' + i);
@@ -428,8 +504,7 @@ function drawDots(){
 function openLock(mode, title, cb){
   lockMode = mode;
   verifyCb = cb || null;
-  lockBuf = ''; busy = false;
-  locked = true;
+  lockBuf = ''; busy = false; locked = true;
   $('lkTitle').textContent = title || 'Apna PIN daalo';
   $('lkCancel').style.display = (mode === 'verify') ? 'inline-block' : 'none';
   $('lkMsg').textContent = '';
@@ -442,25 +517,22 @@ function closeLock(){
   lockBuf = ''; busy = false;
   $('lock').style.display = 'none';
 }
-function showLock(){
-  if(!getPin()) return;
-  openLock('unlock', 'Apna PIN daalo');
-}
 function glowKey(k){
-  var btn = document.querySelector('#lock .pad button[data-k="' + k + '"]');
+  var btn = document.querySelector('#lockPad button[data-k="' + k + '"]');
   if(!btn) return;
   $('lock').style.setProperty('--kc', KCOL[Math.floor(Math.random() * KCOL.length)]);
   btn.classList.add('glow');
   setTimeout(function(){ btn.classList.remove('glow'); }, 260);
 }
 function pressKey(k){
-  if(busy) return;
+  if(!locked || busy) return;
   if(k === '<'){ lockBuf = lockBuf.slice(0, -1); drawDots(); return; }
   if(lockBuf.length >= 4) return;
   lockBuf += k;
   drawDots();
   keyTone(k);
   vib(8);
+  glowKey(k);
   if(lockBuf.length === 4){
     busy = true;
     var typed = lockBuf;
@@ -472,40 +544,35 @@ function pressKey(k){
           closeLock();
           if(cb) cb();
         } else {
-          welcomeVoice();
+          localStorage.setItem('lockDay', today());
           closeLock();
+          welcomeVoice();
+          showToast('Vada yaad rakho: aaj ka kaam poora karna hai');
+          flow();
         }
       } else {
         $('lkMsg').textContent = 'PIN galat hai, dobara try karo';
         vib([40, 60, 40]);
+        var box = $('lbox');
+        box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
         lockBuf = ''; drawDots();
       }
-    }, 180);
+    }, 150);
   }
 }
-/* touchstart par pakdo (click ka wait nahi), duplicate event rokne ke liye preventDefault */
-document.querySelectorAll('#lock .pad button[data-k]').forEach(function(b){
-  var k = b.getAttribute('data-k');
-  b.addEventListener('touchstart', function(e){
-    if(e.cancelable) e.preventDefault();
-    glowKey(k);
-    pressKey(k);
-  }, {passive:false});
-  b.addEventListener('mousedown', function(){
-    glowKey(k);
-    pressKey(k);
-  });
+$('lockPad').addEventListener('pointerdown', function(e){
+  var b = e.target.closest ? e.target.closest('button[data-k]') : null;
+  if(!b) return;
+  e.preventDefault();
+  var now = Date.now();
+  if(now - lastTap < 60) return;
+  lastTap = now;
+  pressKey(b.getAttribute('data-k'));
 });
-$('lkCancel').onclick = function(){
-  verifyCb = null;
-  closeLock();
-};
-document.addEventListener('visibilitychange', function(){
-  if(!document.hidden && getPin() && lockMode !== 'verify') showLock();
-});
+$('lkCancel').onclick = function(){ verifyCb = null; closeLock(); };
 function pinSay(t){ $('pinSt').textContent = t; }
 function drawPinState(){
-  pinSay(getPin() ? 'PIN lagaa hua hai. App kholne par PIN maangega.' : 'PIN abhi lagaya nahi hai');
+  pinSay(getPin() ? 'PIN lagaa hua hai. Har din pehli baar app kholne par vada aur PIN maangega.' : 'PIN abhi lagaya nahi hai');
 }
 function pinIsValidNew(p){ return /^[0-9]{4}$/.test(p); }
 $('pinSave').onclick = function(){
@@ -516,20 +583,21 @@ $('pinSave').onclick = function(){
   localStorage.setItem('pin', pinHash(nw));
   $('pinNew').value = ''; $('pinOld').value = '';
   drawPinState();
-  pinSay('PIN save ho gaya. Ab app PIN maangega.');
+  pinSay('PIN save ho gaya. Agli baar app kholne par PIN maangega.');
 };
 $('pinOff').onclick = function(){
   var old = $('pinOld').value.trim();
   if(!getPin()){ pinSay('PIN pehle se lagaa nahi hai'); return; }
   if(pinHash(old) !== getPin()){ pinSay('PIN hatane ke liye sahi purana PIN likho'); return; }
   localStorage.removeItem('pin');
+  localStorage.removeItem('lockDay');
   $('pinOld').value = '';
   drawPinState();
   pinSay('PIN hata diya gaya');
 };
 $('pinNow').onclick = function(){
   if(!getPin()){ pinSay('Pehle PIN lagao'); return; }
-  showLock();
+  openLock('unlock', 'Apna PIN daalo');
 };
 
 /* ---------- swipe between main tabs (Settings mein swipe nahi) ---------- */
@@ -537,7 +605,7 @@ var sx = 0, sy = 0, sdx = 0, mode = null, tracking = false;
 function activeEl(){ return $('t-' + curTab); }
 document.addEventListener('touchstart', function(e){
   var t = e.target;
-  if(locked || curTab === 'settings' || !e.touches || e.touches.length !== 1 || (t.closest && t.closest('input,select,textarea,label'))){
+  if(locked || promiseOpen || curTab === 'settings' || !e.touches || e.touches.length !== 1 || (t.closest && t.closest('input,select,textarea,label'))){
     tracking = false; return;
   }
   tracking = true; mode = null; sdx = 0;
@@ -578,24 +646,29 @@ function endSwipe(){
 document.addEventListener('touchend', endSwipe, {passive:true});
 document.addEventListener('touchcancel', endSwipe, {passive:true});
 
-/* ---------- intro: only first time ---------- */
-var introT = null;
-function checkName(){
-  var s = loadSet();
-  if(s.name){ applySettings(); ensureNotif(); return; }
-  $('welcome').style.display = 'flex';
-  $('wname').focus();
+/* ---------- app ke shuru ka flow ---------- */
+/* 1) naam  2) roz ka vada  3) PIN  4) app */
+function flow(){
+  if(!loadSet().name){
+    $('welcome').style.display = 'flex';
+    $('wname').focus();
+    return;
+  }
+  if(needPromise()){ showPromise(); return; }
+  if(needLock()){ openLock('unlock', 'Apna PIN daalo'); return; }
+  ensureNotif();
 }
+var introT = null;
 function endIntro(){
   clearTimeout(introT);
   localStorage.setItem('introSeen', '1');
   var s = $('splash');
   s.classList.add('hide');
-  setTimeout(function(){ s.style.display = 'none'; checkName(); }, 700);
+  setTimeout(function(){ s.style.display = 'none'; flow(); }, 700);
 }
 $('skip').onclick = endIntro;
 
-/* ---------- welcome: name ask ---------- */
+/* ---------- welcome: naam ---------- */
 $('wgo').onclick = function(){
   var name = $('wname').value.trim();
   if(!name){ $('wmsg').textContent = 'Pehle naam likho'; return; }
@@ -616,8 +689,7 @@ $('wgo').onclick = function(){
     var w = $('welcome');
     w.style.transition = 'opacity .5s ease';
     w.style.opacity = '0';
-    setTimeout(function(){ w.style.display = 'none'; w.style.opacity = ''; w.style.transition = ''; }, 500);
-    ensureNotif();
+    setTimeout(function(){ w.style.display = 'none'; w.style.opacity = ''; w.style.transition = ''; flow(); }, 500);
   }, 2000);
 };
 
@@ -1202,16 +1274,25 @@ $('set').onclick = async function(){
   }catch(e){ say('set error: ' + e.message + ' (upar Notification allow karo dabao)'); }
 };
 
+/* ---------- visibility: app wapas aaye to vada / PIN check ---------- */
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden) return;
+  if($('splash').style.display !== 'none') return;
+  if(!loadSet().name) return;
+  if(locked || promiseOpen) return;
+  if(needPromise()){ showPromise(); return; }
+  if(needLock()){ openLock('unlock', 'Apna PIN daalo'); }
+});
+
 /* ---------- start ---------- */
 applySettings();
 show(loadSet().start || 'dash', 0);
 if(localStorage.getItem('introSeen')){
   $('splash').style.display = 'none';
-  checkName();
+  flow();
 } else {
   introT = setTimeout(endIntro, 9300);
 }
-if(getPin()) showLock();
 </script>
 </body>
   </html>
