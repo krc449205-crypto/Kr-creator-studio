@@ -5,26 +5,57 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>KR Creator Studio</title>
 <style>
-  :root{--gold:#d4af37;--gold2:#f3d77a;--silver:#e8edf2;--bg:#000;--txt:#f5f0e1;--mut:#8f8a7a}
+  :root{--gold:#d4af37;--gold2:#f3d77a;--silver:#e8edf2;--txt:#f5f9ff;--mut:#9fb3c4}
   *{-webkit-tap-highlight-color:transparent;box-sizing:border-box}
   html,body{height:100%}
-  body{background:var(--bg);color:var(--txt);font-family:sans-serif;margin:0;padding:20px 16px 100px;min-height:100vh;position:relative;overflow-x:hidden}
-  .glow{position:fixed;width:320px;height:320px;border-radius:50%;filter:blur(110px);opacity:.07;pointer-events:none;z-index:0;animation:hueSpin 18s linear infinite}
-  .g1{background:var(--gold);left:-150px;top:-120px}
-  .g2{background:#22d3ee;right:-160px;bottom:-140px;animation-duration:22s}
-  @keyframes hueSpin{from{filter:blur(110px) hue-rotate(0deg)}to{filter:blur(110px) hue-rotate(360deg)}}
-  #mainwrap{position:relative;z-index:1;min-height:70vh;overflow:hidden}
+  body{background:#03070c;color:var(--txt);font-family:-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;padding:18px 16px 104px;min-height:100vh;position:relative;overflow-x:hidden}
 
-  h2{margin:4px 0 14px;font-weight:600;letter-spacing:.5px;color:var(--gold2)}
-  h3{margin:22px 0 8px;color:var(--gold);font-size:13px;letter-spacing:1px;text-transform:uppercase}
-  input,button,select,textarea{width:100%;padding:14px;margin:6px 0;border-radius:12px;font-size:16px;outline:none}
-  input,select,textarea{background:#0c0c0c;color:var(--txt);border:1px solid #2a2a2a;transition:border-color .2s}
-  input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+  .water{position:fixed;inset:-25%;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(circle at 18% 28%,rgba(34,211,238,.38),transparent 40%),
+      radial-gradient(circle at 82% 18%,rgba(59,130,246,.32),transparent 42%),
+      radial-gradient(circle at 50% 92%,rgba(20,184,166,.30),transparent 46%),
+      radial-gradient(circle at 74% 62%,rgba(168,85,247,.18),transparent 40%);
+    filter:blur(34px);animation:flow 16s ease-in-out infinite alternate}
+  @keyframes flow{from{transform:translate3d(-4%,-3%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.1)}}
+  #mainwrap{position:relative;z-index:1;min-height:70vh}
+
+  h2{margin:4px 0 14px;font-weight:700;letter-spacing:.4px;color:#eafcff;text-shadow:0 0 14px rgba(34,211,238,.45)}
+  h3{margin:20px 0 8px;color:#bff3ff;font-size:13px;letter-spacing:1.2px;text-transform:uppercase}
+
+  .glass,.card{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.24);border-radius:20px;padding:16px;margin:12px 0;
+    backdrop-filter:blur(16px) saturate(170%);-webkit-backdrop-filter:blur(16px) saturate(170%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 12px 30px rgba(0,0,0,.45);overflow:hidden}
+  .glass::before,.card::before{content:"";position:absolute;top:0;left:-70%;width:45%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.10),transparent);pointer-events:none;animation:glide 6s ease-in-out infinite}
+  @keyframes glide{0%,60%{left:-70%}100%{left:130%}}
+
+  input,select,textarea{width:100%;padding:14px;margin:7px 0;border-radius:14px;font-size:16px;outline:none;
+    background:rgba(255,255,255,.08);color:#f5f9ff;border:1px solid rgba(255,255,255,.22);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  input[type=checkbox]{width:auto;margin:0}
+  input:focus,select:focus,textarea:focus{border-color:#67e8f9;box-shadow:0 0 0 3px rgba(103,232,249,.18)}
   textarea{height:110px;font-size:13px}
-  button{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#111;border:none;font-weight:600;box-shadow:0 4px 14px rgba(212,175,55,.25);transition:transform .15s ease,box-shadow .15s ease}
-  button:active{transform:scale(.97)}
-  .ghost{background:transparent;color:var(--gold2);border:1px solid rgba(212,175,55,.4);box-shadow:none}
-  .gear{position:fixed;top:12px;right:12px;width:auto;margin:0;padding:8px 12px;border-radius:50%;font-size:18px;z-index:45;background:rgba(20,20,20,.9);color:var(--gold2);border:1px solid rgba(212,175,55,.45);box-shadow:0 0 12px rgba(212,175,55,.2)}
+
+  button{position:relative;overflow:hidden;width:100%;padding:14px;margin:8px 0;border:none;border-radius:16px;
+    font-size:15px;font-weight:700;color:#0a0f14;
+    background:linear-gradient(90deg,#b8902a 0%,#f3d77a 46%,#f7feff 54%,#a7ecff 100%);
+    box-shadow:0 8px 22px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.75);transition:transform .12s ease}
+  button::after{content:"";position:absolute;top:-25%;left:-60%;width:38%;height:150%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);transform:skewX(-18deg);
+    animation:shine 2.8s ease-in-out infinite;pointer-events:none}
+  @keyframes shine{0%{left:-60%}60%,100%{left:130%}}
+  button:active{transform:scale(.96)}
+  button.ghost{background:rgba(255,255,255,.08);color:#e6f7ff;border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+  button.ghost::after{display:none}
+  button.del{background:linear-gradient(90deg,#7f1d1d,#f87171 50%,#ffe4e6);color:#2a0606}
+  button.del::after{display:none}
+
+  .gear{position:fixed;top:12px;right:12px;width:44px;height:44px;margin:0;padding:0;border-radius:50%;font-size:18px;z-index:45;
+    background:rgba(255,255,255,.12);color:#eafcff;border:1px solid rgba(255,255,255,.35);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 0 16px rgba(34,211,238,.35)}
+  .gear::after{display:none}
 
   .tab{display:none}
   .tab.on{display:block}
@@ -33,96 +64,92 @@
   @keyframes fromR{from{opacity:0;transform:translate3d(42px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
   @keyframes fromL{from{opacity:0;transform:translate3d(-42px,0,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 
-  .prof{display:flex;align-items:center;gap:16px;margin:6px 0 10px}
-  .dp{position:relative;flex:0 0 104px;width:104px;height:104px;border-radius:50%;overflow:hidden;box-shadow:0 0 22px rgba(168,85,247,.25)}
-  .dp::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from var(--a),#f3d77a,#22d3ee,#a855f7,#f43f5e,#f3d77a);animation:spin 4s linear infinite,hue 12s linear infinite}
+  .prof{display:flex;align-items:center;gap:16px;margin:6px 0 12px}
+  .dp{position:relative;flex:0 0 104px;width:104px;height:104px;border-radius:50%;overflow:hidden;box-shadow:0 0 26px rgba(34,211,238,.35)}
+  .dp::before{content:"";position:absolute;inset:-50%;background:conic-gradient(from var(--a),#f3d77a,#67e8f9,#a855f7,#f43f5e,#f3d77a);animation:spin 4s linear infinite,hue 12s linear infinite}
   @property --a{syntax:'<angle>';initial-value:0deg;inherits:false}
   @keyframes spin{to{--a:360deg}}
   @keyframes hue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
-  .dp .in{position:absolute;inset:4px;border-radius:50%;background:#0c0c0c;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:var(--gold2)}
+  .dp .in{position:absolute;inset:4px;border-radius:50%;background:#071018;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#f3d77a}
   .dp img{width:100%;height:100%;object-fit:cover;display:block}
   .pinfo{flex:1;min-width:0}
-  .pname{font-size:20px;font-weight:700;color:var(--txt);word-break:break-word}
+  .pname{font-size:21px;font-weight:700;color:#fff;word-break:break-word}
   .psub{color:var(--mut);font-size:13px;margin-top:4px}
 
   .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 6px}
-  .pbox{position:relative;border-radius:16px;padding:13px;min-height:118px;text-align:left;background:linear-gradient(160deg,#1a1a1a,#060606);border:1px solid rgba(232,237,242,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 14px rgba(232,237,242,.12),0 8px 18px rgba(0,0,0,.6);overflow:hidden}
-  .pbox::before{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);pointer-events:none}
-  .pbox .lab{color:var(--silver);font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.85}
+  .pbox{min-height:122px}
+  .pbox .lab{color:#bff3ff;font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.9}
   .pbox .val{font-size:20px;font-weight:700;color:#fff;margin-top:8px;line-height:1.25;word-break:break-word}
-  .pbox .val.gold{color:var(--gold2)}
+  .pbox .val.gold{background:linear-gradient(90deg,#f3d77a,#f7feff,#a7ecff);-webkit-background-clip:text;color:transparent}
   .pbox .mot{font-size:12px;color:var(--mut);margin-top:8px;font-style:italic;word-break:break-word}
 
-  /* command bar */
-  .cmdbox{position:relative;border-radius:16px;padding:12px;margin:10px 0;background:linear-gradient(160deg,#141414,#070707);border:1px solid rgba(212,175,55,.35);box-shadow:0 0 14px rgba(212,175,55,.12)}
-  .cmdbox .lab{color:var(--gold2);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
-  .row input{flex:1;margin:0;min-width:0}
-
-  .card{background:linear-gradient(160deg,#121212,#070707);border:1px solid #2a2508;padding:14px;border-radius:16px;margin:10px 0;box-shadow:0 6px 18px rgba(0,0,0,.7);transition:transform .2s ease}
-  .row{display:flex;gap:8px;align-items:center}
-  .row button{width:auto;padding:8px 12px;margin:0}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .row button{width:auto;padding:9px 13px;margin:0}
   .grow{flex:1;word-break:break-word}
-  .done{text-decoration:line-through;color:#6d6650}
-  .del{background:#3a1212;color:#f0a9a9;box-shadow:none;border:1px solid #5a2222}
-  .ed{background:#1a1a1a;color:var(--gold);box-shadow:none;border:1px solid #3a3210}
-  .card .del{width:auto;padding:8px 14px;margin:8px 0 0 0}
-  .bar{height:10px;background:#141414;border-radius:6px;overflow:hidden;margin-top:10px}
-  .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));width:0;transition:width .5s ease}
-  .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(0,0,0,.94);border-top:1px solid #2a2508;backdrop-filter:blur(6px)}
-  .nav button{flex:1;border-radius:0;margin:0;background:none;color:var(--mut);box-shadow:none;padding:14px 0;font-size:10px;font-weight:500}
-  .nav button.on{color:var(--gold2);background:none}
-  .st{margin:10px 0;color:var(--gold2);font-size:14px}
+  .done{text-decoration:line-through;color:#6d7a85}
+  .card .del{width:auto;padding:9px 14px;margin:8px 0 0 0}
+  .bar{height:10px;background:rgba(255,255,255,.1);border-radius:8px;overflow:hidden;margin-top:10px}
+  .fill{height:100%;background:linear-gradient(90deg,#b8902a,#f3d77a,#a7ecff);width:0;transition:width .5s ease;box-shadow:0 0 12px rgba(167,236,255,.6)}
 
-  /* ---------- daily promise (vada) ---------- */
-  #promise{position:fixed;inset:0;z-index:160;display:none;align-items:center;justify-content:center;padding:24px;overflow:hidden;
-    background:radial-gradient(ellipse at 50% 10%,rgba(212,175,55,.14),transparent 60%),#000;transition:background .9s ease}
-  #promise.go{background:radial-gradient(circle at 50% 50%,#4ade80,#16a34a 45%,#052e16 100%)}
+  .days{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+  .days label{display:flex;align-items:center;gap:5px;padding:7px 10px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);font-size:13px;color:#eafcff}
+
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:rgba(6,16,26,.55);
+    border-top:1px solid rgba(255,255,255,.18);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .nav button{flex:1;width:auto;margin:0;border-radius:0;padding:12px 0 14px;font-size:10px;font-weight:600;background:none;color:var(--mut);box-shadow:none}
+  .nav button::after{display:none}
+  .nav button.on{color:#eafcff;text-shadow:0 0 10px rgba(103,232,249,.9)}
+  .nav button.on::before{content:"";position:absolute;top:0;left:30%;width:40%;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,#f3d77a,#a7ecff)}
+  .st{margin:10px 0;color:#bff3ff;font-size:14px}
+
+  #lock{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;--kc:#67e8f9;background:#03070c;overflow:hidden}
+  #lock .water{position:absolute}
+  .lbox{position:relative;z-index:2;width:100%;max-width:340px;text-align:center}
+  .lbox.shake{animation:shk .35s}
+  @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .lk-logo{width:62px;height:62px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#0a0f14;
+    background:linear-gradient(135deg,#f3d77a,#f7feff 55%,#a7ecff);box-shadow:0 0 26px rgba(167,236,255,.55)}
+  .lk-title{font-size:13px;font-weight:600;color:#d9f6ff;letter-spacing:1.6px;margin-bottom:24px;text-transform:uppercase}
+  .dots{display:flex;justify-content:center;gap:20px;margin-bottom:12px}
+  .dots span{width:13px;height:13px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);transition:background .2s,box-shadow .2s}
+  .dots span.on{background:linear-gradient(135deg,#f3d77a,#a7ecff);border-color:#e6fbff;box-shadow:0 0 12px var(--kc)}
+  .lk-msg{min-height:20px;color:#fca5a5;font-size:13px;margin-bottom:14px}
+  .pad{display:grid;grid-template-columns:repeat(3,84px);gap:18px 22px;justify-content:center}
+  .pad button{width:84px;height:84px;margin:0;padding:0;border-radius:50%;overflow:visible;
+    background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.35),rgba(255,255,255,.08) 55%,rgba(20,60,80,.35));
+    border:1px solid rgba(255,255,255,.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 20px rgba(0,0,0,.5);
+    color:#f5fdff;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;transition:border-color .15s,box-shadow .15s,transform .1s}
+  .pad button::after{display:none}
+  .pad button .n{font-size:30px;font-weight:300;line-height:1;pointer-events:none}
+  .pad button .l{font-size:9px;letter-spacing:2px;color:#bff3ff;opacity:.8;margin-top:4px;height:10px;pointer-events:none}
+  .pad button.blank{visibility:hidden}
+  .pad button.back{background:transparent;border:none;box-shadow:none;color:#e6fbff}
+  .pad button.back .n{font-size:22px}
+  .pad button.glow{border-color:var(--kc);box-shadow:0 0 24px var(--kc),inset 0 0 14px var(--kc);transform:scale(.96)}
+  .lk-cancel{display:none;width:auto;margin:22px auto 0;padding:9px 20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.35);color:#eafcff;border-radius:22px;font-size:13px;font-weight:600}
+  .lk-cancel::after{display:none}
+
+  #promise{position:fixed;inset:0;z-index:160;display:none;align-items:center;justify-content:center;padding:24px;overflow:hidden;background:#03070c}
+  #promise .water{position:absolute}
   .pbx{position:relative;z-index:2;width:100%;max-width:340px;text-align:center;transition:opacity .4s ease}
   #promise.go .pbx{opacity:0}
-  .pq{font-size:22px;font-weight:700;color:var(--gold2);margin-bottom:10px;line-height:1.3}
+  .pq{font-size:22px;font-weight:700;color:#eafcff;margin-bottom:10px;line-height:1.3;text-shadow:0 0 16px rgba(103,232,249,.4)}
   .ps{color:var(--mut);font-size:14px;margin-bottom:26px}
-  .pbtn{display:block;width:100%;padding:16px;margin:10px 0;border-radius:16px;font-size:15px;font-weight:700;background:linear-gradient(135deg,#f3d77a,#d4af37);color:#111;border:none;box-shadow:0 6px 20px rgba(212,175,55,.3)}
-  .pbtn.alt{background:transparent;color:var(--gold2);border:1px solid rgba(212,175,55,.45);box-shadow:none}
+  #promise.go{background:radial-gradient(circle at 50% 50%,#4ade80,#15803d 45%,#052e16 100%)}
   #promise .bd{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px 0 0 -12px;border-radius:50%;opacity:0;z-index:1}
   #promise.go .bd{animation:bd 1.1s ease-out forwards}
   @keyframes bd{0%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(60)}}
 
-  /* ---------- toast ---------- */
-  #toast{position:fixed;top:18px;left:50%;z-index:170;transform:translateX(-50%) translateY(-20px);background:rgba(20,20,20,.96);border:1px solid rgba(212,175,55,.55);color:var(--gold2);padding:12px 18px;border-radius:14px;font-size:14px;opacity:0;transition:all .4s ease;pointer-events:none;max-width:90%;text-align:center;display:none}
+  #toast{position:fixed;top:18px;left:50%;z-index:170;transform:translateX(-50%) translateY(-20px);background:rgba(8,20,30,.8);border:1px solid rgba(255,255,255,.3);color:#eafcff;padding:12px 18px;border-radius:16px;font-size:14px;opacity:0;transition:all .4s ease;pointer-events:none;max-width:90%;text-align:center;display:none;backdrop-filter:blur(12px)}
   #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  /* ---------- PIN lock ---------- */
-  #lock{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;--kc:#22d3ee;
-    background:radial-gradient(ellipse at 50% 12%,rgba(34,211,238,.10),transparent 55%),radial-gradient(ellipse at 50% 100%,rgba(168,85,247,.12),transparent 60%),#000}
-  .lbox{width:100%;max-width:340px;text-align:center}
-  .lbox.shake{animation:shk .35s}
-  @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-  .lk-logo{width:58px;height:58px;margin:0 auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;letter-spacing:1px;color:#0b0b0b;background:linear-gradient(135deg,#f3d77a,#d4af37);box-shadow:0 0 22px rgba(212,175,55,.45)}
-  .lk-title{font-size:14px;font-weight:300;color:#c4c4c4;letter-spacing:1.5px;margin-bottom:24px;text-transform:uppercase}
-  .dots{display:flex;justify-content:center;gap:20px;margin-bottom:12px}
-  .dots span{width:12px;height:12px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);transition:background .2s,box-shadow .2s,border-color .2s}
-  .dots span.on{background:var(--kc);border-color:var(--kc);box-shadow:0 0 12px var(--kc)}
-  .lk-msg{min-height:20px;color:#fca5a5;font-size:13px;margin-bottom:14px}
-  .pad{display:grid;grid-template-columns:repeat(3,84px);gap:18px 22px;justify-content:center}
-  .pad button{width:84px;height:84px;margin:0;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.14);
-    background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.14),rgba(255,255,255,.02) 60%,rgba(0,0,0,.25));
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 6px 16px rgba(0,0,0,.6);color:#f5f5f5;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
-    transition:border-color .15s,box-shadow .15s}
-  .pad button .n{font-size:30px;font-weight:300;line-height:1;pointer-events:none}
-  .pad button .l{font-size:9px;letter-spacing:2px;color:#8a8a8a;margin-top:4px;height:10px;pointer-events:none}
-  .pad button.blank{visibility:hidden}
-  .pad button.back{background:transparent;border:none;box-shadow:none;color:#cfcfcf}
-  .pad button.back .n{font-size:22px}
-  .pad button.glow{border-color:var(--kc);box-shadow:0 0 22px var(--kc),inset 0 0 12px var(--kc)}
-  .pad button.glow .n{color:var(--kc)}
-  .lk-cancel{display:none;width:auto;margin:22px auto 0;padding:8px 18px;background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold2);box-shadow:none;border-radius:20px;font-size:13px;font-weight:500}
-
-  #splash{position:fixed;inset:0;background:#000;z-index:99;overflow:hidden;transition:opacity .6s ease}
+  #splash{position:fixed;inset:0;background:#03070c;z-index:99;overflow:hidden;transition:opacity .6s ease}
   #splash.hide{opacity:0;pointer-events:none}
-  .skip{position:fixed;top:14px;right:14px;width:auto;padding:8px 14px;font-size:13px;z-index:100;background:rgba(255,255,255,.08);color:var(--gold2);box-shadow:none;border:1px solid rgba(212,175,55,.4)}
-  .ic{position:absolute;left:50%;top:45%;margin:-16px 0 0 -16px;font-size:26px;opacity:0;animation:gather 6s ease-in-out forwards}
+  #splash .water{position:absolute}
+  .skip{position:fixed;top:14px;right:14px;width:auto;padding:8px 14px;font-size:13px;z-index:100;background:rgba(255,255,255,.1);color:#eafcff;border:1px solid rgba(255,255,255,.35);box-shadow:none;border-radius:18px;backdrop-filter:blur(10px)}
+  .skip::after{display:none}
+  .ic{position:absolute;left:50%;top:45%;margin:-16px 0 0 -16px;font-size:26px;opacity:0;animation:gather 6s ease-in-out forwards;z-index:2}
   @keyframes gather{
     0%{opacity:0;transform:translate(var(--x),var(--y))}
     12%{opacity:.9}
@@ -131,45 +158,49 @@
     65%{opacity:0;transform:translate(0,0) scale(.2)}
     100%{opacity:0}
   }
-  .pre{position:absolute;left:0;right:0;top:72%;text-align:center;color:var(--mut);letter-spacing:1px;font-size:15px;opacity:0;animation:preFade 3s ease forwards}
+  .pre{position:absolute;left:0;right:0;top:72%;text-align:center;color:#bff3ff;letter-spacing:1px;font-size:15px;opacity:0;animation:preFade 3s ease forwards;z-index:2}
   @keyframes preFade{0%{opacity:0}15%{opacity:1}80%{opacity:1}100%{opacity:0}}
-  .center{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);text-align:center;width:100%}
-  .logo{font-size:60px;font-weight:800;letter-spacing:8px;color:var(--gold2);text-shadow:0 0 18px rgba(212,175,55,.7),0 0 40px rgba(212,175,55,.35);opacity:0;animation:logoIn 1.5s ease 3.5s forwards}
+  .center{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);text-align:center;width:100%;z-index:2}
+  .logo{font-size:60px;font-weight:800;letter-spacing:8px;background:linear-gradient(90deg,#f3d77a,#f7feff,#a7ecff,#f3d77a);-webkit-background-clip:text;color:transparent;opacity:0;animation:logoIn 1.5s ease 3.5s forwards}
   @keyframes logoIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
-  .tag{position:absolute;left:0;right:0;top:80%;text-align:center;color:var(--silver);font-size:15px;letter-spacing:1px;opacity:0;animation:tagIn .9s ease 6.2s forwards}
+  .tag{position:absolute;left:0;right:0;top:80%;text-align:center;color:#d9f6ff;font-size:15px;letter-spacing:1px;opacity:0;animation:tagIn .9s ease 6.2s forwards;z-index:2}
   @keyframes tagIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-  #welcome{position:fixed;inset:0;background:#000;z-index:98;display:none;align-items:center;justify-content:center;padding:28px}
-  .wbox{width:100%;max-width:360px;text-align:center}
-  .wlogo{font-size:40px;font-weight:800;letter-spacing:6px;color:var(--gold2);text-shadow:0 0 16px rgba(212,175,55,.6);margin-bottom:26px}
-  .wq{font-size:22px;color:var(--txt);margin-bottom:18px;letter-spacing:.3px;min-height:30px;transition:opacity .4s ease}
+  #welcome{position:fixed;inset:0;background:#03070c;z-index:98;display:none;align-items:center;justify-content:center;padding:28px;overflow:hidden}
+  #welcome .water{position:absolute}
+  .wbox{position:relative;z-index:2;width:100%;max-width:360px;text-align:center}
+  .wlogo{font-size:40px;font-weight:800;letter-spacing:6px;background:linear-gradient(90deg,#f3d77a,#f7feff,#a7ecff);-webkit-background-clip:text;color:transparent;margin-bottom:26px}
+  .wq{font-size:22px;color:#eafcff;margin-bottom:18px;letter-spacing:.3px;min-height:30px;transition:opacity .4s ease}
   .wmsg{color:#fca5a5;font-size:13px;min-height:18px;margin-top:6px}
   #wname{text-align:center}
+
+  .gear{position:fixed}
 </style>
 </head>
 <body>
 
-<div class="glow g1"></div>
-<div class="glow g2"></div>
+<div class="water"></div>
 
 <button id="gear" class="gear" title="Settings">⚙</button>
 
 <div id="toast"></div>
 
 <div id="promise">
+  <div class="water"></div>
   <div class="bd" style="background:#f3d77a;animation-delay:0s"></div>
-  <div class="bd" style="background:#22d3ee;animation-delay:.08s"></div>
+  <div class="bd" style="background:#a7ecff;animation-delay:.08s"></div>
   <div class="bd" style="background:#f43f5e;animation-delay:.16s"></div>
   <div class="bd" style="background:#a855f7;animation-delay:.24s"></div>
   <div class="pbx">
     <div class="pq">Aaj tum apna kaam poora karoge?</div>
     <div class="ps">Pehle vada karo, phir app khulega</div>
-    <button id="pY" class="pbtn">Haan, aaj main apna kaam poora karunga</button>
-    <button id="pN" class="pbtn alt">Haan, baad mein poora karunga</button>
+    <button id="pY">Haan, aaj main apna kaam poora karunga</button>
+    <button id="pN" class="ghost">Haan, baad mein poora karunga</button>
   </div>
 </div>
 
 <div id="lock">
+  <div class="water"></div>
   <div class="lbox" id="lbox">
     <div class="lk-logo">KR</div>
     <div class="lk-title" id="lkTitle">Apna PIN daalo</div>
@@ -194,6 +225,7 @@
 </div>
 
 <div id="splash">
+  <div class="water"></div>
   <button id="skip" class="skip">Skip</button>
   <div class="ic" style="--x:-120px;--y:-170px;animation-delay:0s">🎯</div>
   <div class="ic" style="--x:130px;--y:-150px;animation-delay:.3s">📈</div>
@@ -205,6 +237,7 @@
 </div>
 
 <div id="welcome">
+  <div class="water"></div>
   <div class="wbox">
     <div class="wlogo">KR</div>
     <div id="wq" class="wq">Aapka naam kya hai?</div>
@@ -219,7 +252,7 @@
 <div id="t-dash" class="tab on">
   <h2 id="hi">Dashboard</h2>
 
-  <div class="prof">
+  <div class="glass prof">
     <div class="dp"><div class="in" id="dpBox">KR</div></div>
     <div class="pinfo">
       <div class="pname" id="pName">-</div>
@@ -228,24 +261,15 @@
   </div>
 
   <div class="pgrid">
-    <div class="pbox">
+    <div class="glass pbox">
       <div class="lab">Aaj ka message</div>
       <div class="val gold" id="pMsg">All the best</div>
     </div>
-    <div class="pbox">
+    <div class="glass pbox">
       <div class="lab">Mera goal</div>
       <div class="val" id="pGoal">-</div>
       <div class="mot" id="pMot"></div>
     </div>
-  </div>
-
-  <div class="cmdbox">
-    <div class="lab">Command</div>
-    <div class="row">
-      <input id="cmdIn" placeholder="jaise: goal 1000 subscribers" autocomplete="off">
-      <button id="cmdGo">Chalao</button>
-    </div>
-    <div id="cmdOut" class="st">Likho: help</div>
   </div>
 
   <div class="card">Aaj ke goals: <b id="d1">0</b></div>
@@ -259,131 +283,198 @@
   <div class="card">Aaj ka plan: <b id="d7">0</b></div>
   <div class="card">Routine streak: <b id="d8">0</b> din</div>
   <div class="card">Achievements: <b id="d9">0</b></div>
+  <div class="card">Morning goal alarm: <b id="dMor">-</b></div>
   <div class="card">Agla 30 min reminder: <b id="dRep">-</b></div>
 </div>
 
 <div id="t-goals" class="tab">
   <h2>Goals</h2>
-  <input id="gdate" type="date">
-  <input id="gtitle" placeholder="Goal likho (jaise 1 video banao)">
-  <button id="gadd">Goal add karo</button>
-  <div id="gst" class="st"></div>
+  <div class="glass">
+    <input id="gdate" type="date">
+    <input id="gtitle" placeholder="Goal likho (jaise 1 video banao)">
+    <button id="gadd">Goal add karo</button>
+    <div id="gst" class="st"></div>
+  </div>
   <div id="glist"></div>
 </div>
 
-<div id="t-subs" class="tab">
-  <h2>Subscribers</h2>
-  <input id="sdate" type="date">
-  <input id="scount" type="number" inputmode="numeric" placeholder="Aaj subscribers kitne hain">
-  <button id="sadd">Save karo</button>
-  <div id="sst" class="st"></div>
+<div id="t-channel" class="tab">
+  <h2>Channel</h2>
+  <h3>Subscribers</h3>
+  <div class="glass">
+    <input id="sdate" type="date">
+    <input id="scount" type="number" inputmode="numeric" placeholder="Aaj subscribers kitne hain">
+    <button id="sadd">Save karo</button>
+    <div id="sst" class="st"></div>
+  </div>
   <div id="slist"></div>
-</div>
-
-<div id="t-likes" class="tab">
-  <h2>Likes</h2>
-  <input id="ldate" type="date">
-  <input id="lname" placeholder="Video/post ka naam">
-  <input id="lcount" type="number" inputmode="numeric" placeholder="Likes kitne hain">
-  <button id="ladd">Save karo</button>
-  <div id="lst" class="st"></div>
+  <h3>Likes</h3>
+  <div class="glass">
+    <input id="ldate" type="date">
+    <input id="lname" placeholder="Video/post ka naam">
+    <input id="lcount" type="number" inputmode="numeric" placeholder="Likes kitne hain">
+    <button id="ladd">Save karo</button>
+    <div id="lst" class="st"></div>
+  </div>
   <div id="llist"></div>
 </div>
 
 <div id="t-plan" class="tab">
   <h2>Content Plan</h2>
-  <input id="pdate" type="date">
-  <input id="ptext" placeholder="Content ka idea (jaise Vlog on Sunday)">
-  <select id="pstatus">
-    <option value="Idea">Idea</option>
-    <option value="Shoot">Shoot</option>
-    <option value="Edit">Edit</option>
-    <option value="Upload">Upload</option>
-  </select>
-  <button id="padd">Plan add karo</button>
-  <div id="pst" class="st"></div>
+  <div class="glass">
+    <input id="pdate" type="date">
+    <input id="ptext" placeholder="Content ka idea (jaise Vlog on Sunday)">
+    <select id="pstatus">
+      <option value="Idea">Idea</option>
+      <option value="Shoot">Shoot</option>
+      <option value="Edit">Edit</option>
+      <option value="Upload">Upload</option>
+    </select>
+    <button id="padd">Plan add karo</button>
+    <div id="pst" class="st"></div>
+  </div>
   <div id="plist"></div>
 </div>
 
 <div id="t-routine" class="tab">
   <h2>Routine</h2>
-  <div id="rstreak" class="st"></div>
-  <input id="rname" placeholder="Routine kaam (jaise Script likho)">
-  <button id="radd">Routine add karo</button>
-  <div id="rst" class="st"></div>
+  <div class="glass">
+    <div id="rstreak" class="st"></div>
+    <input id="rname" placeholder="Routine kaam (jaise Script likho)">
+    <button id="radd">Routine add karo</button>
+    <div id="rst" class="st"></div>
+  </div>
   <div id="rlist"></div>
+</div>
+
+<div id="t-alarm" class="tab">
+  <h2>Alarm</h2>
+
+  <h3>Morning goal alarm</h3>
+  <div class="glass">
+    <select id="morOn">
+      <option value="off">Band</option>
+      <option value="on">Chalu</option>
+    </select>
+    <input id="morTime" type="time" value="06:00">
+    <select id="morRep">
+      <option value="5">Har 5 minute</option>
+      <option value="10">Har 10 minute</option>
+      <option value="15">Har 15 minute</option>
+      <option value="30">Har 30 minute</option>
+    </select>
+    <button id="morSave">Morning alarm save karo</button>
+    <div id="morSt" class="st">Band hai</div>
+  </div>
+
+  <h3>Custom alarm</h3>
+  <div class="glass">
+    <input id="caTime" type="time">
+    <input id="caLabel" placeholder="Label (jaise Video upload karo)">
+    <div class="days">
+      <label><input type="checkbox" id="ca0">Sun</label>
+      <label><input type="checkbox" id="ca1">Mon</label>
+      <label><input type="checkbox" id="ca2">Tue</label>
+      <label><input type="checkbox" id="ca3">Wed</label>
+      <label><input type="checkbox" id="ca4">Thu</label>
+      <label><input type="checkbox" id="ca5">Fri</label>
+      <label><input type="checkbox" id="ca6">Sat</label>
+    </div>
+    <div class="st">Koi din na chuno to ek baar (agar time nikal gaya ho to kal us time par) bajega.</div>
+    <button id="caAdd">Alarm add karo</button>
+    <div id="caSt" class="st"></div>
+  </div>
+
+  <h3>Alarm list</h3>
+  <div id="alist"></div>
 </div>
 
 <div id="t-more" class="tab">
   <h2>More</h2>
 
-  <button id="openSet" class="ghost">⚙ Settings kholo (PIN, profile, naam, 30 min reminder)</button>
+  <button id="openSet" class="ghost">⚙ Settings kholo</button>
 
   <h3>Reminders</h3>
-  <div id="nstat" class="st">Notification: check ho raha hai...</div>
-  <button id="remAllow">Notification allow karo</button>
-  <input id="title" placeholder="Reminder ka title">
-  <input id="when" type="datetime-local">
-  <button id="set">Reminder set karo</button>
-  <div id="status" class="st">Status: abhi kuch nahi hua</div>
+  <div class="glass">
+    <div id="nstat" class="st">Notification: check ho raha hai...</div>
+    <button id="remAllow" class="ghost">Notification allow karo</button>
+    <input id="title" placeholder="Reminder ka title">
+    <input id="when" type="datetime-local">
+    <button id="set">Reminder set karo</button>
+    <div id="status" class="st">Status: abhi kuch nahi hua</div>
+  </div>
   <div id="list"></div>
 
   <h3>Achievements</h3>
-  <div id="ach"></div>
+  <div class="glass"><div id="ach"></div></div>
 
   <h3>Backup (export / import)</h3>
-  <button id="expb">Export banao</button>
-  <textarea id="exp" placeholder="Export yahan dikhega. Copy karke safe jagah save karo."></textarea>
-  <button id="impb">Import karo (PIN maangega)</button>
-  <div id="ist" class="st"></div>
+  <div class="glass">
+    <button id="expb">Export banao</button>
+    <textarea id="exp" placeholder="Export yahan dikhega. Copy karke safe jagah save karo."></textarea>
+    <button id="impb" class="ghost">Import karo (PIN maangega)</button>
+    <div id="ist" class="st"></div>
+  </div>
 
   <h3>Reset</h3>
-  <input id="rtxt" placeholder="Sab data delete karne ke liye RESET likho">
-  <button id="rbtn" class="del">Sab data delete karo (PIN maangega)</button>
+  <div class="glass">
+    <input id="rtxt" placeholder="Sab data delete karne ke liye RESET likho">
+    <button id="rbtn" class="del">Sab data delete karo (PIN maangega)</button>
+  </div>
 </div>
 
 <div id="t-settings" class="tab">
   <h2>Settings</h2>
   <button id="backDash" class="ghost">← Dashboard par wapas</button>
 
-  <h3>PIN lock (identity safe)</h3>
-  <div id="pinSt" class="st">PIN: abhi lagaya nahi hai</div>
-  <input id="pinNew" type="password" inputmode="numeric" maxlength="4" placeholder="Naya 4 digit PIN">
-  <input id="pinOld" type="password" inputmode="numeric" maxlength="4" placeholder="Purana PIN (badalne ya hatane ke liye)">
-  <button id="pinSave">PIN lagao / badlo</button>
-  <button id="pinOff" class="del">PIN hatao</button>
-  <button id="pinNow">Abhi lock karo</button>
+  <h3>PIN lock</h3>
+  <div class="glass">
+    <div id="pinSt" class="st">PIN: abhi lagaya nahi hai</div>
+    <input id="pinNew" type="password" inputmode="numeric" maxlength="4" placeholder="Naya 4 digit PIN">
+    <input id="pinOld" type="password" inputmode="numeric" maxlength="4" placeholder="Purana PIN (badalne ya hatane ke liye)">
+    <button id="pinSave">PIN lagao / badlo</button>
+    <button id="pinOff" class="del">PIN hatao</button>
+    <button id="pinNow" class="ghost">Abhi lock karo</button>
+  </div>
 
   <h3>Mera profile</h3>
-  <input id="dpFile" type="file" accept="image/*">
-  <input id="pMsgIn" placeholder="Aaj ka message (jaise All the best)">
-  <input id="pGoalIn" placeholder="Mera goal (jaise 1000 subscribers)">
-  <input id="pMotIn" placeholder="Motivation line (jaise Aaj ek kadam aur)">
-  <button id="pSave">Profile save karo</button>
-  <button id="dpClear" class="del">DP hatao</button>
-  <div id="pSt" class="st"></div>
+  <div class="glass">
+    <input id="dpFile" type="file" accept="image/*">
+    <input id="pMsgIn" placeholder="Aaj ka message (jaise All the best)">
+    <input id="pGoalIn" placeholder="Mera goal (jaise 1000 subscribers)">
+    <input id="pMotIn" placeholder="Motivation line (jaise Aaj ek kadam aur)">
+    <button id="pSave">Profile save karo</button>
+    <button id="dpClear" class="del">DP hatao</button>
+    <div id="pSt" class="st"></div>
+  </div>
 
   <h3>Naam aur shuru ka tab</h3>
-  <input id="cname" placeholder="Aapka naam (Dashboard pe dikhega)">
-  <select id="cstart">
-    <option value="dash">App Dashboard se khule</option>
-    <option value="goals">App Goals se khule</option>
-    <option value="plan">App Plan se khule</option>
-    <option value="routine">App Routine se khule</option>
-  </select>
-  <button id="sset">Settings save karo</button>
-  <div id="sett" class="st"></div>
+  <div class="glass">
+    <input id="cname" placeholder="Aapka naam (Dashboard pe dikhega)">
+    <select id="cstart">
+      <option value="dash">App Dashboard se khule</option>
+      <option value="goals">App Goals se khule</option>
+      <option value="channel">App Channel se khule</option>
+      <option value="plan">App Plan se khule</option>
+      <option value="routine">App Routine se khule</option>
+      <option value="alarm">App Alarm se khule</option>
+    </select>
+    <button id="sset">Settings save karo</button>
+    <div id="sett" class="st"></div>
+  </div>
 
   <h3>30 minute ka reminder</h3>
-  <select id="repOn">
-    <option value="off">Band</option>
-    <option value="on">Chalu</option>
-  </select>
-  <input id="repStart" type="time" value="12:00">
-  <input id="repEnd" type="time" value="22:00">
-  <input id="repMsg" placeholder="Message (jaise: Ab kaam par lautiye)">
-  <button id="repSave">30 min reminder save karo</button>
-  <div id="repSt" class="st"></div>
+  <div class="glass">
+    <select id="repOn">
+      <option value="off">Band</option>
+      <option value="on">Chalu</option>
+    </select>
+    <input id="repStart" type="time" value="12:00">
+    <input id="repEnd" type="time" value="22:00">
+    <input id="repMsg" placeholder="Message (jaise: Ab kaam par lautiye)">
+    <button id="repSave">30 min reminder save karo</button>
+    <div id="repSt" class="st"></div>
+  </div>
 </div>
 
 </div>
@@ -391,10 +482,10 @@
 <div class="nav">
   <button id="n-dash" class="on">Dashboard</button>
   <button id="n-goals">Goals</button>
-  <button id="n-subs">Subs</button>
-  <button id="n-likes">Likes</button>
+  <button id="n-channel">Channel</button>
   <button id="n-plan">Plan</button>
   <button id="n-routine">Routine</button>
+  <button id="n-alarm">Alarm</button>
   <button id="n-more">More</button>
 </div>
 
@@ -403,6 +494,7 @@ function $(i){ return document.getElementById(i); }
 function pad(n){ return n < 10 ? '0' + n : '' + n; }
 function fmt(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
 function today(){ return fmt(new Date()); }
+function addDays(d, n){ return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
 function load(k){ try{ return JSON.parse(localStorage.getItem(k) || '[]'); }catch(e){ return []; } }
 function save(k,a){ localStorage.setItem(k, JSON.stringify(a)); }
 function loadSet(){ try{ return JSON.parse(localStorage.getItem('settings') || '{}'); }catch(e){ return {}; } }
@@ -410,9 +502,11 @@ function profGet(){ try{ return JSON.parse(localStorage.getItem('prof') || '{}')
 function profSet(o){ localStorage.setItem('prof', JSON.stringify(o)); }
 function card(inner){ var c = document.createElement('div'); c.className = 'card'; c.appendChild(inner); return c; }
 function vib(p){ if(navigator.vibrate) navigator.vibrate(p); }
-var KEYS = ['goals','subs','likes','plan','rem','routine','rlog'];
-var ORDER = ['dash','goals','subs','likes','plan','routine','more'];
+var KEYS = ['goals','subs','likes','plan','rem','routine','rlog','alarms'];
+var ORDER = ['dash','goals','channel','plan','routine','alarm','more'];
 var ALLTABS = ORDER.concat(['settings']);
+var DNAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+var MOR_BASE = 5000, CA_STRIDE = 100;
 var curTab = 'dash';
 
 /* ---------- sound ---------- */
@@ -449,18 +543,14 @@ function welcomeVoice(){
 }
 document.addEventListener('click', function(ev){
   if(ev.target.closest && ev.target.closest('#lock, #promise')) return;
-  if(ev.target.closest && ev.target.closest('button')){
-    clickSound();
-    vib(10);
-  }
+  if(ev.target.closest && ev.target.closest('button')){ clickSound(); vib(10); }
 });
 
 /* ---------- toast ---------- */
 var toastT = null;
 function showToast(msg){
   var t = $('toast');
-  t.textContent = msg;
-  t.style.display = 'block';
+  t.textContent = msg; t.style.display = 'block';
   t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
   clearTimeout(toastT);
   toastT = setTimeout(function(){
@@ -470,18 +560,15 @@ function showToast(msg){
 }
 
 /* ---------- roz ka vada ---------- */
-var promiseOpen = false;
-var promiseBusy = false;
+var promiseOpen = false, promiseBusy = false;
 function needPromise(){ return localStorage.getItem('promiseDay') !== today(); }
 function showPromise(){
   promiseOpen = true; promiseBusy = false;
-  $('promise').classList.remove('go');
-  $('promise').style.display = 'flex';
+  $('promise').classList.remove('go'); $('promise').style.display = 'flex';
 }
 function hidePromise(){
   promiseOpen = false; promiseBusy = false;
-  $('promise').classList.remove('go');
-  $('promise').style.display = 'none';
+  $('promise').classList.remove('go'); $('promise').style.display = 'none';
 }
 function promiseTap(){
   if(promiseBusy) return;
@@ -494,14 +581,9 @@ function promiseTap(){
 $('pY').onclick = promiseTap;
 $('pN').onclick = promiseTap;
 
-/* ---------- PIN lock (roz ek baar) ---------- */
-var locked = false;
-var lockMode = 'unlock';
-var verifyCb = null;
-var lockBuf = '';
-var busy = false;
-var lastTap = 0;
-var KCOL = ['#22d3ee','#a855f7','#f43f5e','#f3d77a','#22c55e','#3b82f6','#f97316'];
+/* ---------- PIN lock ---------- */
+var locked = false, lockMode = 'unlock', verifyCb = null, lockBuf = '', busy = false, lastTap = 0;
+var KCOL = ['#67e8f9','#a7ecff','#f3d77a','#f472b6','#a855f7','#4ade80','#fb923c'];
 function getPin(){ return localStorage.getItem('pin') || ''; }
 function pinHash(p){
   var h = 5381;
@@ -516,19 +598,16 @@ function drawDots(){
   }
 }
 function openLock(mode, title, cb){
-  lockMode = mode;
-  verifyCb = cb || null;
+  lockMode = mode; verifyCb = cb || null;
   lockBuf = ''; busy = false; locked = true;
   $('lkTitle').textContent = title || 'Apna PIN daalo';
   $('lkCancel').style.display = (mode === 'verify') ? 'inline-block' : 'none';
   $('lkMsg').textContent = '';
-  $('lock').style.setProperty('--kc', '#22d3ee');
-  drawDots();
-  $('lock').style.display = 'flex';
+  $('lock').style.setProperty('--kc', '#67e8f9');
+  drawDots(); $('lock').style.display = 'flex';
 }
 function closeLock(){
-  locked = false;
-  lockBuf = ''; busy = false;
+  locked = false; lockBuf = ''; busy = false;
   $('lock').style.display = 'none';
 }
 function glowKey(k){
@@ -543,10 +622,7 @@ function pressKey(k){
   if(k === '<'){ lockBuf = lockBuf.slice(0, -1); drawDots(); return; }
   if(lockBuf.length >= 4) return;
   lockBuf += k;
-  drawDots();
-  keyTone(k);
-  vib(8);
-  glowKey(k);
+  drawDots(); keyTone(k); vib(8); glowKey(k);
   if(lockBuf.length === 4){
     busy = true;
     var typed = lockBuf;
@@ -559,8 +635,7 @@ function pressKey(k){
           if(cb) cb();
         } else {
           localStorage.setItem('lockDay', today());
-          closeLock();
-          welcomeVoice();
+          closeLock(); welcomeVoice();
           showToast('Vada yaad rakho: aaj ka kaam poora karna hai');
           flow();
         }
@@ -574,13 +649,9 @@ function pressKey(k){
     }, 150);
   }
 }
-$('lockPad').addEventListener('pointerdown', function(e){
+$('lockPad').addEventListener('click', function(e){
   var b = e.target.closest ? e.target.closest('button[data-k]') : null;
   if(!b) return;
-  e.preventDefault();
-  var now = Date.now();
-  if(now - lastTap < 60) return;
-  lastTap = now;
   pressKey(b.getAttribute('data-k'));
 });
 $('lkCancel').onclick = function(){ verifyCb = null; closeLock(); };
@@ -590,31 +661,26 @@ function drawPinState(){
 }
 function pinIsValidNew(p){ return /^[0-9]{4}$/.test(p); }
 $('pinSave').onclick = function(){
-  var nw = $('pinNew').value.trim();
-  var old = $('pinOld').value.trim();
+  var nw = $('pinNew').value.trim(), old = $('pinOld').value.trim();
   if(!pinIsValidNew(nw)){ pinSay('Naya PIN theek 4 digit ka hona chahiye (sirf numbers)'); return; }
   if(getPin() && pinHash(old) !== getPin()){ pinSay('Purana PIN galat hai'); return; }
   localStorage.setItem('pin', pinHash(nw));
   $('pinNew').value = ''; $('pinOld').value = '';
-  drawPinState();
-  pinSay('PIN save ho gaya. Agli baar app kholne par PIN maangega.');
+  drawPinState(); pinSay('PIN save ho gaya. Agli baar app kholne par PIN maangega.');
 };
 $('pinOff').onclick = function(){
   var old = $('pinOld').value.trim();
   if(!getPin()){ pinSay('PIN pehle se lagaa nahi hai'); return; }
   if(pinHash(old) !== getPin()){ pinSay('PIN hatane ke liye sahi purana PIN likho'); return; }
-  localStorage.removeItem('pin');
-  localStorage.removeItem('lockDay');
-  $('pinOld').value = '';
-  drawPinState();
-  pinSay('PIN hata diya gaya');
+  localStorage.removeItem('pin'); localStorage.removeItem('lockDay');
+  $('pinOld').value = ''; drawPinState(); pinSay('PIN hata diya gaya');
 };
 $('pinNow').onclick = function(){
   if(!getPin()){ pinSay('Pehle PIN lagao'); return; }
   openLock('unlock', 'Apna PIN daalo');
 };
 
-/* ---------- swipe between main tabs (Settings mein swipe nahi) ---------- */
+/* ---------- swipe between main tabs ---------- */
 var sx = 0, sy = 0, sdx = 0, mode = null, tracking = false;
 function activeEl(){ return $('t-' + curTab); }
 document.addEventListener('touchstart', function(e){
@@ -643,16 +709,14 @@ document.addEventListener('touchmove', function(e){
 function endSwipe(){
   if(!tracking || mode !== 'h'){ tracking = false; mode = null; return; }
   tracking = false;
-  var idx = ORDER.indexOf(curTab);
-  var go = 0;
+  var idx = ORDER.indexOf(curTab), go = 0;
   if(sdx < -50) go = 1; else if(sdx > 50) go = -1;
   if(go !== 0 && ORDER[idx + go]){
     show(ORDER[idx + go], go);
   } else {
     var el = activeEl();
     el.style.transition = 'transform .3s cubic-bezier(.2,.8,.2,1), opacity .3s ease';
-    el.style.transform = 'translate3d(0,0,0)';
-    el.style.opacity = '1';
+    el.style.transform = 'translate3d(0,0,0)'; el.style.opacity = '1';
     setTimeout(function(){ el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; }, 320);
   }
   mode = null;
@@ -662,11 +726,7 @@ document.addEventListener('touchcancel', endSwipe, {passive:true});
 
 /* ---------- shuru ka flow: naam > vada > PIN > app ---------- */
 function flow(){
-  if(!loadSet().name){
-    $('welcome').style.display = 'flex';
-    $('wname').focus();
-    return;
-  }
+  if(!loadSet().name){ $('welcome').style.display = 'flex'; $('wname').focus(); return; }
   if(needPromise()){ showPromise(); return; }
   if(needLock()){ openLock('unlock', 'Apna PIN daalo'); return; }
   ensureNotif();
@@ -681,12 +741,10 @@ function endIntro(){
 }
 $('skip').onclick = endIntro;
 
-/* ---------- welcome: naam ---------- */
 $('wgo').onclick = function(){
   var name = $('wname').value.trim();
   if(!name){ $('wmsg').textContent = 'Pehle naam likho'; return; }
-  var s = loadSet();
-  s.name = name;
+  var s = loadSet(); s.name = name;
   if(!s.start) s.start = 'dash';
   localStorage.setItem('settings', JSON.stringify(s));
   $('wq').style.opacity = '0';
@@ -694,14 +752,11 @@ $('wgo').onclick = function(){
     $('wq').textContent = 'Welcome, ' + name + ' 👋';
     $('wq').style.opacity = '1';
   }, 300);
-  $('wname').style.display = 'none';
-  $('wgo').style.display = 'none';
-  $('wmsg').textContent = '';
+  $('wname').style.display = 'none'; $('wgo').style.display = 'none'; $('wmsg').textContent = '';
   applySettings();
   setTimeout(function(){
     var w = $('welcome');
-    w.style.transition = 'opacity .5s ease';
-    w.style.opacity = '0';
+    w.style.transition = 'opacity .5s ease'; w.style.opacity = '0';
     setTimeout(function(){ w.style.display = 'none'; w.style.opacity = ''; w.style.transition = ''; flow(); }, 500);
   }, 2000);
 };
@@ -714,22 +769,17 @@ function show(name, dir){
     t.classList.remove('on','fromR','fromL');
     t.style.transition = ''; t.style.transform = ''; t.style.opacity = '';
   });
-  ORDER.forEach(function(n){
-    $('n-' + n).className = (n === name ? 'on' : '');
-  });
+  ORDER.forEach(function(n){ $('n-' + n).className = (n === name ? 'on' : ''); });
   var nw = $('t-' + name);
   nw.classList.add('on');
-  if(dir){
-    void nw.offsetWidth;
-    nw.classList.add(dir > 0 ? 'fromR' : 'fromL');
-  }
+  if(dir){ void nw.offsetWidth; nw.classList.add(dir > 0 ? 'fromR' : 'fromL'); }
   window.scrollTo(0, 0);
   if(name === 'dash') drawDash();
   if(name === 'goals') drawGoals();
-  if(name === 'subs') drawSubs();
-  if(name === 'likes') drawLikes();
+  if(name === 'channel'){ drawSubs(); drawLikes(); }
   if(name === 'plan') drawPlan();
   if(name === 'routine') drawRoutine();
+  if(name === 'alarm') drawAlarm();
   if(name === 'more'){ drawRem(); drawAch(); }
   if(name === 'settings'){ drawSettings(); drawProfForm(); drawRepForm(); drawPinState(); }
 }
@@ -739,121 +789,24 @@ ORDER.forEach(function(n){ $('n-' + n).onclick = function(){
   show(n, dir);
 }; });
 $('gear').onclick = function(){ show('settings', 0); };
-$('openSet').onclick = function(){ show('settings', 0); };
 $('backDash').onclick = function(){ show('dash', 0); };
-
-/* ---------- command bar ---------- */
-async function runCmd(raw){
-  var s = (raw || '').trim();
-  if(!s) return 'Kuch likho. Help ke liye "help" likho.';
-  var low = s.toLowerCase();
-  var sp = s.indexOf(' ');
-  var key = sp < 0 ? low : low.slice(0, sp);
-  var arg = sp < 0 ? '' : s.slice(sp + 1).trim();
-
-  if(key === 'help'){
-    return 'Commands: goal <text> | msg <text> | kaam <text> | naam <naam> | subs <number> | reminder HH:MM <text> | open <dash/goals/subs/likes/plan/routine/more/settings> | lock | dp | help. PIN, reset aur import sirf Settings/More mein PIN ke saath.';
-  }
-  if(key === 'goal'){
-    if(!arg) return 'Goal likho, jaise: goal 1000 subscribers';
-    var p = profGet(); p.goal = arg; profSet(p); drawDash();
-    return 'Mera goal set ho gaya: ' + arg;
-  }
-  if(key === 'msg'){
-    if(!arg) return 'Message likho, jaise: msg Aaj bhi kaam pe';
-    var p2 = profGet(); p2.msg = arg; profSet(p2); drawDash();
-    return 'Aaj ka message set ho gaya';
-  }
-  if(key === 'kaam'){
-    if(!arg) return 'Kaam likho, jaise: kaam 1 video banao';
-    var g = load('goals');
-    g.push({id: Date.now() + Math.floor(Math.random()*1000), title: arg, date: today(), done: false});
-    save('goals', g); drawGoals(); drawDash();
-    return 'Aaj ka kaam add ho gaya: ' + arg;
-  }
-  if(key === 'naam'){
-    if(!arg) return 'Naam likho, jaise: naam Ravi';
-    var st = loadSet(); st.name = arg;
-    localStorage.setItem('settings', JSON.stringify(st));
-    applySettings();
-    return 'Naam set ho gaya: ' + arg;
-  }
-  if(key === 'subs'){
-    var n = parseInt(arg, 10);
-    if(isNaN(n) || n < 0) return 'Number likho, jaise: subs 120';
-    var sa = load('subs').filter(function(x){ return x.date !== today(); });
-    sa.push({id: Date.now() + Math.floor(Math.random()*1000), date: today(), count: n});
-    save('subs', sa); drawSubs(); drawDash();
-    return 'Aaj ke subscribers save ho gaye: ' + n;
-  }
-  if(key === 'reminder'){
-    var m = arg.match(/^(\d{1,2}):(\d{2})\s+(.+)$/);
-    if(!m) return 'Aise likho: reminder 18:30 video upload karo';
-    var hh = parseInt(m[1], 10), mm = parseInt(m[2], 10);
-    if(hh > 23 || mm > 59) return 'Time sahi likho (00:00 se 23:59 tak)';
-    var when = new Date();
-    when.setHours(hh, mm, 0, 0);
-    if(when.getTime() <= Date.now() + 5000) when.setDate(when.getDate() + 1);
-    return await addReminder(m[3].trim(), when);
-  }
-  if(key === 'open'){
-    var map = {dash:'dash', dashboard:'dash', goals:'goals', subs:'subs', likes:'likes', plan:'plan', routine:'routine', more:'more', settings:'settings'};
-    var tgt = map[arg.toLowerCase()];
-    if(!tgt) return 'Tab ka naam: dash, goals, subs, likes, plan, routine, more, settings';
-    show(tgt, 0);
-    return 'Khul gaya: ' + tgt;
-  }
-  if(key === 'dp'){
-    show('settings', 0);
-    return 'Settings ke "Mera profile" mein photo chuno';
-  }
-  if(key === 'lock'){
-    if(!getPin()) return 'Pehle Settings mein PIN lagao';
-    openLock('unlock', 'Apna PIN daalo');
-    return 'App lock ho gaya';
-  }
-  if(['pin','reset','import','delete','hatao'].indexOf(key) >= 0){
-    return 'Ye kaam suraksha ke liye sirf Settings ya More mein PIN ke saath hota hai';
-  }
-  return 'Samajh nahi aaya. "help" likho.';
-}
-async function cmdGo(){
-  var v = $('cmdIn').value;
-  $('cmdOut').textContent = '...';
-  try{
-    var r = await runCmd(v);
-    $('cmdOut').textContent = r;
-    if(v.trim()) $('cmdIn').value = '';
-  }catch(e){
-    $('cmdOut').textContent = 'Error: ' + e.message;
-  }
-}
-$('cmdGo').onclick = cmdGo;
-$('cmdIn').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); cmdGo(); } });
 
 /* ---------- profile ---------- */
 function drawProfile(){
-  var p = profGet(); var s = loadSet();
+  var p = profGet(), s = loadSet();
   $('pName').textContent = s.name || 'Creator';
   var subs = load('subs').sort(function(x,y){ return x.date < y.date ? 1 : -1; });
   $('pSubs').textContent = subs.length ? subs[0].count : 0;
-  var box = $('dpBox');
-  box.innerHTML = '';
-  if(p.dp){
-    var im = document.createElement('img'); im.src = p.dp; box.appendChild(im);
-  } else {
-    var ini = (s.name || 'KR').trim().charAt(0).toUpperCase() || 'K';
-    box.textContent = ini;
-  }
+  var box = $('dpBox'); box.innerHTML = '';
+  if(p.dp){ var im = document.createElement('img'); im.src = p.dp; box.appendChild(im); }
+  else { box.textContent = (s.name || 'KR').trim().charAt(0).toUpperCase() || 'K'; }
   $('pMsg').textContent = p.msg || 'All the best';
   $('pGoal').textContent = p.goal || '-';
   $('pMot').textContent = p.mot || '';
 }
 function drawProfForm(){
   var p = profGet();
-  $('pMsgIn').value = p.msg || '';
-  $('pGoalIn').value = p.goal || '';
-  $('pMotIn').value = p.mot || '';
+  $('pMsgIn').value = p.msg || ''; $('pGoalIn').value = p.goal || ''; $('pMotIn').value = p.mot || '';
 }
 $('dpFile').onchange = function(){
   var f = this.files && this.files[0];
@@ -866,13 +819,9 @@ $('dpFile').onchange = function(){
       var c = document.createElement('canvas'); c.width = S; c.height = S;
       var ctx = c.getContext('2d');
       var m = Math.min(im.width, im.height);
-      var sx0 = (im.width - m) / 2, sy0 = (im.height - m) / 2;
-      ctx.drawImage(im, sx0, sy0, m, m, 0, 0, S, S);
-      var p = profGet();
-      p.dp = c.toDataURL('image/jpeg', 0.85);
-      profSet(p);
-      drawProfile();
-      $('pSt').textContent = 'DP save ho gaya';
+      ctx.drawImage(im, (im.width - m) / 2, (im.height - m) / 2, m, m, 0, 0, S, S);
+      var p = profGet(); p.dp = c.toDataURL('image/jpeg', 0.85); profSet(p);
+      drawProfile(); $('pSt').textContent = 'DP save ho gaya';
     };
     im.src = rd.result;
   };
@@ -884,19 +833,14 @@ $('dpClear').onclick = function(){
 };
 $('pSave').onclick = function(){
   var p = profGet();
-  p.msg = $('pMsgIn').value.trim();
-  p.goal = $('pGoalIn').value.trim();
-  p.mot = $('pMotIn').value.trim();
-  profSet(p);
-  drawProfile();
-  $('pSt').textContent = 'Profile save ho gaya';
+  p.msg = $('pMsgIn').value.trim(); p.goal = $('pGoalIn').value.trim(); p.mot = $('pMotIn').value.trim();
+  profSet(p); drawProfile(); $('pSt').textContent = 'Profile save ho gaya';
 };
 
-/* ---------- settings (naam + start tab) ---------- */
+/* ---------- settings ---------- */
 function drawSettings(){
   var s = loadSet();
-  $('cname').value = s.name || '';
-  $('cstart').value = s.start || 'dash';
+  $('cname').value = s.name || ''; $('cstart').value = s.start || 'dash';
 }
 function applySettings(){
   var s = loadSet();
@@ -905,11 +849,9 @@ function applySettings(){
 }
 $('sset').onclick = function(){
   var s = loadSet();
-  s.name = $('cname').value.trim();
-  s.start = $('cstart').value;
+  s.name = $('cname').value.trim(); s.start = $('cstart').value;
   localStorage.setItem('settings', JSON.stringify(s));
-  applySettings();
-  $('sett').textContent = 'Settings save ho gayi';
+  applySettings(); $('sett').textContent = 'Settings save ho gayi';
 };
 
 /* ---------- 30 minute repeat reminder ---------- */
@@ -925,7 +867,7 @@ function fmtT(dt){
   return dt.toLocaleDateString() + ' ' + dt.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 }
 function repTimes(days){
-  var r = repGet(); var out = [];
+  var r = repGet(), out = [];
   if(!r.on) return out;
   var s = hm(r.start), e = hm(r.end);
   if(e <= s) return out;
@@ -938,25 +880,19 @@ function repTimes(days){
   }
   return out.slice(0, REP_MAX);
 }
-function nextRep(){
-  var t = repTimes(2);
-  return t.length ? t[0] : null;
-}
+function nextRep(){ var t = repTimes(2); return t.length ? t[0] : null; }
 function repSay(t){ $('repSt').textContent = t; }
 async function applyRep(){
   if(!LN) return;
   var old = [];
   try{ old = JSON.parse(localStorage.getItem('repIds') || '[]'); }catch(e){}
-  if(old.length){
-    try{ await LN.cancel({notifications: old.map(function(id){ return {id:id}; })}); }catch(e){}
-  }
+  if(old.length){ try{ await LN.cancel({notifications: old.map(function(id){ return {id:id}; })}); }catch(e){} }
   localStorage.setItem('repIds', '[]');
   var times = repTimes(2);
   if(times.length){
     var msg = repGet().msg || 'Ab kaam par lautiye';
     var list = times.map(function(dt, i){
-      return {id: REP_BASE + i, title: 'KR Creator Studio', body: msg, channelId: CH,
-              schedule: {at: dt, allowWhileIdle: true}};
+      return {id: REP_BASE + i, title: 'KR Creator Studio', body: msg, channelId: CH, schedule: {at: dt, allowWhileIdle: true}};
     });
     try{
       await LN.schedule({notifications: list});
@@ -1000,14 +936,13 @@ function drawGoals(){
     var r = document.createElement('div'); r.className = 'row';
     var cb = document.createElement('input');
     cb.type = 'checkbox'; cb.checked = g.done;
-    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#d4af37';
+    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#a7ecff';
     cb.onchange = function(){ toggleGoal(g.id); };
     var t = document.createElement('div');
-    t.className = 'grow' + (g.done ? ' done' : '');
-    t.textContent = g.title;
-    var e = document.createElement('button'); e.className = 'ed'; e.textContent = 'Edit';
+    t.className = 'grow' + (g.done ? ' done' : ''); t.textContent = g.title;
+    var e = document.createElement('button'); e.className = 'ghost'; e.style.width = 'auto'; e.style.padding = '9px 13px'; e.textContent = 'Edit';
     e.onclick = function(){ editingId = g.id; $('gtitle').value = g.title; $('gadd').textContent = 'Save karo'; $('gtitle').focus(); };
-    var d = document.createElement('button'); d.className = 'del'; d.textContent = 'Delete';
+    var d = document.createElement('button'); d.className = 'del'; d.style.width = 'auto'; d.style.padding = '9px 13px'; d.textContent = 'Delete';
     d.onclick = function(){ delGoal(g.id); };
     r.appendChild(cb); r.appendChild(t); r.appendChild(e); r.appendChild(d);
     l.appendChild(card(r));
@@ -1022,25 +957,25 @@ function delGoal(id){
   save('goals', load('goals').filter(function(g){ return g.id !== id; }));
   if(editingId === id){ editingId = null; $('gtitle').value = ''; $('gadd').textContent = 'Goal add karo'; }
   drawGoals(); $('gst').textContent = 'Goal delete ho gaya';
+  morSchedule();
 }
 $('gadd').onclick = function(){
-  var title = $('gtitle').value.trim();
-  var date = $('gdate').value;
+  var title = $('gtitle').value.trim(), date = $('gdate').value;
   if(!date){ $('gst').textContent = 'Pehle date chuno'; return; }
   if(!title){ $('gst').textContent = 'Pehle goal likho'; return; }
   var a = load('goals');
   if(editingId !== null){
     a.forEach(function(g){ if(g.id === editingId) g.title = title; });
-    editingId = null; $('gadd').textContent = 'Goal add karo';
-    $('gst').textContent = 'Goal badal gaya';
+    editingId = null; $('gadd').textContent = 'Goal add karo'; $('gst').textContent = 'Goal badal gaya';
   } else {
     a.push({id: Date.now() + Math.floor(Math.random()*1000), title: title, date: date, done: false});
     $('gst').textContent = 'Goal add ho gaya';
   }
   save('goals', a); $('gtitle').value = ''; drawGoals();
+  morSchedule();
 };
 
-/* ---------- subscribers ---------- */
+/* ---------- channel: subscribers ---------- */
 $('sdate').value = today();
 function drawSubs(){
   var l = $('slist'); l.innerHTML = '';
@@ -1063,8 +998,7 @@ function delSub(id){
   drawSubs(); $('sst').textContent = 'Entry delete ho gayi';
 }
 $('sadd').onclick = function(){
-  var date = $('sdate').value;
-  var n = parseInt($('scount').value, 10);
+  var date = $('sdate').value, n = parseInt($('scount').value, 10);
   if(!date){ $('sst').textContent = 'Pehle date chuno'; return; }
   if(isNaN(n) || n < 0){ $('sst').textContent = 'Sahi number likho'; return; }
   var a = load('subs').filter(function(s){ return s.date !== date; });
@@ -1074,7 +1008,7 @@ $('sadd').onclick = function(){
   drawSubs();
 };
 
-/* ---------- likes ---------- */
+/* ---------- channel: likes ---------- */
 $('ldate').value = today();
 function likesTotal(){ var t = 0; load('likes').forEach(function(x){ t += x.count; }); return t; }
 function drawLikes(){
@@ -1097,9 +1031,7 @@ function delLike(id){
   drawLikes();
 }
 $('ladd').onclick = function(){
-  var date = $('ldate').value;
-  var name = $('lname').value.trim();
-  var n = parseInt($('lcount').value, 10);
+  var date = $('ldate').value, name = $('lname').value.trim(), n = parseInt($('lcount').value, 10);
   if(!date){ $('lst').textContent = 'Pehle date chuno'; return; }
   if(!name){ $('lst').textContent = 'Video/post ka naam likho'; return; }
   if(isNaN(n) || n < 0){ $('lst').textContent = 'Sahi number likho'; return; }
@@ -1128,7 +1060,7 @@ function drawPlan(){
     });
     s.onchange = function(){ setPlanStatus(p.id, s.value); };
     r.appendChild(s);
-    var b = document.createElement('button'); b.className = 'del'; b.textContent = 'Delete';
+    var b = document.createElement('button'); b.className = 'del'; b.style.width = 'auto'; b.textContent = 'Delete';
     b.onclick = function(){ delPlan(p.id); };
     r.appendChild(b);
     w.appendChild(t); w.appendChild(r);
@@ -1145,9 +1077,7 @@ function delPlan(id){
   drawPlan(); $('pst').textContent = 'Plan delete ho gaya';
 }
 $('padd').onclick = function(){
-  var date = $('pdate').value;
-  var text = $('ptext').value.trim();
-  var status = $('pstatus').value;
+  var date = $('pdate').value, text = $('ptext').value.trim(), status = $('pstatus').value;
   if(!date){ $('pst').textContent = 'Pehle date chuno'; return; }
   if(!text){ $('pst').textContent = 'Pehle idea likho'; return; }
   var a = load('plan');
@@ -1169,29 +1099,25 @@ function streak(){
 }
 function drawRoutine(){
   var l = $('rlist'); l.innerHTML = '';
-  var items = load('routine');
-  var logs = load('rlog');
-  var t = today();
+  var items = load('routine'), logs = load('rlog'), t = today();
   $('rstreak').textContent = 'Streak: ' + streak() + ' din (aaj ka kaam tick karo)';
   if(!items.length){ l.textContent = 'Abhi koi routine kaam nahi'; return; }
   items.forEach(function(r){
     var w = document.createElement('div'); w.className = 'row';
     var cb = document.createElement('input');
     cb.type = 'checkbox';
-    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#d4af37';
+    cb.style.cssText = 'width:24px;height:24px;margin:0;accent-color:#a7ecff';
     cb.checked = logs.some(function(x){ return x.date === t && x.rid === r.id; });
     cb.onchange = function(){ toggleRoutine(r.id); };
     var nm = document.createElement('div'); nm.className = 'grow'; nm.textContent = r.name;
-    var b = document.createElement('button'); b.className = 'del'; b.textContent = 'Delete';
+    var b = document.createElement('button'); b.className = 'del'; b.style.width = 'auto'; b.textContent = 'Delete';
     b.onclick = function(){ delRoutine(r.id); };
     w.appendChild(cb); w.appendChild(nm); w.appendChild(b);
     l.appendChild(card(w));
   });
 }
 function toggleRoutine(rid){
-  var logs = load('rlog');
-  var t = today();
-  var idx = -1;
+  var logs = load('rlog'), t = today(), idx = -1;
   logs.forEach(function(x, i){ if(x.date === t && x.rid === rid) idx = i; });
   if(idx >= 0) logs.splice(idx, 1); else logs.push({date: t, rid: rid});
   save('rlog', logs); drawRoutine();
@@ -1206,17 +1132,191 @@ $('radd').onclick = function(){
   var a = load('routine');
   a.push({id: Date.now() + Math.floor(Math.random()*1000), name: name});
   save('routine', a); $('rname').value = '';
-  $('rst').textContent = 'Routine add ho gaya';
-  drawRoutine();
+  $('rst').textContent = 'Routine add ho gaya'; drawRoutine();
+};
+
+/* ---------- MORNING GOAL ALARM ---------- */
+function morGet(){
+  try{ return JSON.parse(localStorage.getItem('morn') || 'null') || {on:false, time:'06:00', rep:5}; }
+  catch(e){ return {on:false, time:'06:00', rep:5}; }
+}
+function morIds(){ try{ return JSON.parse(localStorage.getItem('morIds') || '[]'); }catch(e){ return []; } }
+function hasGoalOn(dateStr){ return load('goals').some(function(g){ return g.date === dateStr; }); }
+function cancelIds(ids){
+  if(!LN || !ids || !ids.length) return Promise.resolve();
+  return LN.cancel({notifications: ids.map(function(id){ return {id:id}; })}).catch(function(){});
+}
+/* har din ke liye 12 repeat tak, lekin us din goal na ho to */
+async function morSchedule(){
+  await cancelIds(morIds());
+  localStorage.setItem('morIds', '[]');
+  var m = morGet();
+  if(!LN || !m.on) return;
+  var hh = m.time.split(':'), H = parseInt(hh[0],10), M = parseInt(hh[1],10);
+  var rep = parseInt(m.rep, 10) || 5;
+  var now = new Date(), list = [];
+  for(var d = 0; d < 3; d++){
+    var day = addDays(now, d);
+    if(hasGoalOn(fmt(day))) continue;
+    for(var k = 0; k < 12; k++){
+      var dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), H, M + k * rep, 0);
+      if(dt.getTime() > Date.now() + 5000){
+        list.push({id: MOR_BASE + d * 100 + k, title: 'KR Creator Studio', body: 'Aaj ka goal add karo, tab hi ye alarm band hoga', channelId: CH, schedule: {at: dt, allowWhileIdle: true}});
+      }
+    }
+  }
+  if(list.length){
+    try{
+      await LN.schedule({notifications: list});
+      localStorage.setItem('morIds', JSON.stringify(list.map(function(x){ return x.id; })));
+    }catch(e){}
+  }
+  drawDash();
+}
+
+/* ---------- CUSTOM ALARM ---------- */
+function caList(){ try{ return JSON.parse(localStorage.getItem('alarms') || '[]'); }catch(e){ return []; } }
+function caSave(a){ save('alarms', a); }
+function caIdsOf(al){ var r = []; for(var k = 0; k < 14; k++) r.push(al.id * CA_STRIDE + k); return r; }
+function caCancel(al){ return cancelIds(caIdsOf(al)); }
+async function caSchedule(al){
+  if(!LN || !al.on) return;
+  var hh = al.time.split(':'), H = parseInt(hh[0],10), M = parseInt(hh[1],10);
+  var now = new Date(), list = [], k = 0;
+  for(var d = 0; d < 14 && k < 14; d++){
+    var day = addDays(now, d);
+    if(al.days.length && al.days.indexOf(day.getDay()) < 0) continue;
+    var dt = new Date(day.getFullYear(), day.getMonth(), day.getDate(), H, M, 0);
+    if(dt.getTime() <= Date.now() + 5000) continue;
+    list.push({id: al.id * CA_STRIDE + k, title: 'KR Alarm', body: al.label || 'Alarm', channelId: CH, schedule: {at: dt, allowWhileIdle: true}});
+    k++;
+    if(!al.days.length) break;
+  }
+  if(!list.length){ if(!al.days.length) al.on = false; return; }
+  try{ await LN.schedule({notifications: list}); }catch(e){}
+}
+async function caAll(){
+  var a = caList();
+  for(var i = 0; i < a.length; i++) await caCancel(a[i]);
+  for(var j = 0; j < a.length; j++) await caSchedule(a[j]);
+  caSave(a);
+}
+function caNextId(){
+  var n = parseInt(localStorage.getItem('alarmSeq') || '2000', 10) + 1;
+  localStorage.setItem('alarmSeq', String(n));
+  return n;
+}
+$('caAdd').onclick = async function(){
+  var t = $('caTime').value;
+  if(!t){ $('caSt').textContent = 'Time chuno'; return; }
+  var days = [];
+  for(var i = 0; i < 7; i++){ if($('ca' + i).checked) days.push(i); }
+  var al = {id: caNextId(), time: t, label: $('caLabel').value.trim() || 'Alarm', days: days, on: true};
+  var a = caList(); a.push(al);
+  await caSchedule(al);
+  caSave(a);
+  $('caLabel').value = '';
+  for(var j = 0; j < 7; j++) $('ca' + j).checked = false;
+  drawAlarm();
+  $('caSt').textContent = 'Alarm lag gaya';
+};
+async function caToggle(id){
+  var a = caList(), al = a.filter(function(x){ return x.id === id; })[0];
+  if(!al) return;
+  al.on = !al.on;
+  await caCancel(al);
+  await caSchedule(al);
+  caSave(a); drawAlarm();
+}
+async function caDel(id){
+  var a = caList(), al = a.filter(function(x){ return x.id === id; })[0];
+  if(al) await caCancel(al);
+  caSave(a.filter(function(x){ return x.id !== id; }));
+  drawAlarm();
+}
+function drawAlarm(){
+  var m = morGet();
+  $('morOn').value = m.on ? 'on' : 'off';
+  $('morTime').value = m.time;
+  $('morRep').value = String(m.rep);
+  $('morSt').textContent = m.on ? ('Chalu: roz ' + m.time + ' baje, har ' + m.rep + ' minute baad, jab tak aaj ka goal add na ho') : 'Band hai';
+  var l = $('alist'); l.innerHTML = '';
+  var a = caList();
+  if(!a.length){ l.textContent = 'Abhi koi custom alarm nahi'; return; }
+  a.forEach(function(al){
+    var w = document.createElement('div');
+    var t = document.createElement('div');
+    var dn = al.days.length ? al.days.map(function(i){ return DNAMES[i]; }).join(', ') : 'Ek baar';
+    t.textContent = al.time + ' - ' + al.label + ' (' + dn + ')';
+    var r = document.createElement('div'); r.className = 'row'; r.style.marginTop = '8px';
+    var b1 = document.createElement('button'); b1.className = 'ghost'; b1.style.width = 'auto'; b1.textContent = al.on ? 'ON' : 'OFF';
+    b1.onclick = function(){ caToggle(al.id); };
+    var b2 = document.createElement('button'); b2.className = 'del'; b2.style.width = 'auto'; b2.textContent = 'Delete';
+    b2.onclick = function(){ caDel(al.id); };
+    r.appendChild(b1); r.appendChild(b2);
+    w.appendChild(t); w.appendChild(r);
+    l.appendChild(card(w));
+  });
+}
+$('morSave').onclick = async function(){
+  var on = $('morOn').value === 'on', t = $('morTime').value;
+  if(!t){ $('morSt').textContent = 'Time chuno'; return; }
+  var rep = parseInt($('morRep').value, 10) || 5;
+  localStorage.setItem('morn', JSON.stringify({on: on, time: t, rep: rep}));
+  await morSchedule();
+  drawAlarm();
+  $('morSt').textContent = on ? 'Save ho gaya. Goal add karte hi ye band ho jayega.' : 'Band kar diya';
+};
+
+/* ---------- backup (import PIN ke saath) ---------- */
+$('expb').onclick = function(){
+  var o = {};
+  KEYS.forEach(function(k){ o[k] = load(k); });
+  o.settings = loadSet(); o.rep = repGet(); o.prof = profGet(); o.morn = morGet();
+  $('exp').value = JSON.stringify(o);
+  $('ist').textContent = 'Export ho gaya. Text copy karke safe jagah save karo.';
+};
+async function doImport(){
+  var o;
+  try{ o = JSON.parse($('exp').value); }catch(e){ $('ist').textContent = 'Galat text hai, sahi export paste karo'; return; }
+  if(!o || typeof o !== 'object'){ $('ist').textContent = 'Galat text hai'; return; }
+  KEYS.forEach(function(k){ if(Array.isArray(o[k])) save(k, o[k]); });
+  if(o.settings && typeof o.settings === 'object') localStorage.setItem('settings', JSON.stringify(o.settings));
+  if(o.rep && typeof o.rep === 'object') localStorage.setItem('rep', JSON.stringify(o.rep));
+  if(o.prof && typeof o.prof === 'object') profSet(o.prof);
+  if(o.morn && typeof o.morn === 'object') localStorage.setItem('morn', JSON.stringify(o.morn));
+  $('ist').textContent = 'Import ho gaya';
+  applySettings(); drawDash(); drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch(); drawAlarm();
+  await applyAll();
+}
+$('impb').onclick = function(){
+  if(getPin()){ openLock('verify', 'Import ke liye PIN daalo', doImport); return; }
+  doImport();
+};
+
+/* ---------- reset (PIN ke saath) ---------- */
+async function doReset(){
+  await cancelIds(morIds());
+  var al = caList();
+  for(var i = 0; i < al.length; i++) await caCancel(al[i]);
+  await cancelIds(JSON.parse(localStorage.getItem('repIds') || '[]'));
+  KEYS.forEach(function(k){ localStorage.removeItem(k); });
+  ['settings','rep','prof','morn','morIds','repIds','alarmSeq'].forEach(function(k){ localStorage.removeItem(k); });
+  $('rtxt').value = '';
+  $('ist').textContent = 'Sab data delete ho gaya';
+  applySettings(); drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch(); drawAlarm();
+}
+$('rbtn').onclick = function(){
+  if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
+  if(getPin()){ openLock('verify', 'Reset ke liye PIN daalo', doReset); return; }
+  doReset();
 };
 
 /* ---------- achievements ---------- */
 function achList(){
   var goals = load('goals');
   var doneG = goals.filter(function(g){ return g.done; }).length;
-  var s = streak();
-  var planN = load('plan').length;
-  var likes = likesTotal();
+  var s = streak(), planN = load('plan').length, likes = likesTotal();
   return [
     {name: 'Pehla goal pura kiya', ok: doneG >= 1},
     {name: '10 goals pure kiye', ok: doneG >= 10},
@@ -1241,50 +1341,6 @@ function drawAch(){
   });
 }
 
-/* ---------- backup (import PIN ke bina nahi) ---------- */
-$('expb').onclick = function(){
-  var o = {};
-  KEYS.forEach(function(k){ o[k] = load(k); });
-  o.settings = loadSet();
-  o.rep = repGet();
-  o.prof = profGet();
-  $('exp').value = JSON.stringify(o);
-  $('ist').textContent = 'Export ho gaya. Text copy karke safe jagah save karo.';
-};
-function doImport(){
-  var o;
-  try{ o = JSON.parse($('exp').value); }catch(e){ $('ist').textContent = 'Galat text hai, sahi export paste karo'; return; }
-  if(!o || typeof o !== 'object'){ $('ist').textContent = 'Galat text hai'; return; }
-  KEYS.forEach(function(k){ if(Array.isArray(o[k])) save(k, o[k]); });
-  if(o.settings && typeof o.settings === 'object') localStorage.setItem('settings', JSON.stringify(o.settings));
-  if(o.rep && typeof o.rep === 'object') localStorage.setItem('rep', JSON.stringify(o.rep));
-  if(o.prof && typeof o.prof === 'object') profSet(o.prof);
-  $('ist').textContent = 'Import ho gaya';
-  applySettings(); drawDash(); drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch();
-  applyRep();
-}
-$('impb').onclick = function(){
-  if(getPin()){ openLock('verify', 'Import ke liye PIN daalo', doImport); return; }
-  doImport();
-};
-
-/* ---------- reset (PIN ke bina nahi) ---------- */
-function doReset(){
-  KEYS.forEach(function(k){ localStorage.removeItem(k); });
-  localStorage.removeItem('settings');
-  localStorage.removeItem('rep');
-  localStorage.removeItem('prof');
-  $('rtxt').value = '';
-  $('ist').textContent = 'Sab data delete ho gaya';
-  applySettings(); drawDash(); drawGoals(); drawSubs(); drawLikes(); drawPlan(); drawRoutine(); drawSettings(); drawProfForm(); drawRepForm(); drawRem(); drawAch();
-  applyRep();
-}
-$('rbtn').onclick = function(){
-  if($('rtxt').value !== 'RESET'){ $('ist').textContent = 'Reset ke liye RESET likho'; return; }
-  if(getPin()){ openLock('verify', 'Reset ke liye PIN daalo', doReset); return; }
-  doReset();
-};
-
 /* ---------- dashboard ---------- */
 function drawDash(){
   var a = load('goals');
@@ -1301,8 +1357,9 @@ function drawDash(){
   $('d7').textContent = load('plan').filter(function(p){ return p.date === today(); }).length;
   $('d8').textContent = streak();
   $('d9').textContent = achList().filter(function(x){ return x.ok; }).length;
-  var r = repGet();
-  var n = nextRep();
+  var m = morGet();
+  $('dMor').textContent = m.on ? (m.time + (hasGoalOn(today()) ? ' (aaj goal hai, chup)' : '')) : 'Band hai';
+  var r = repGet(), n = nextRep();
   $('dRep').textContent = !r.on ? 'Band hai' : (n ? fmtT(n) : 'Aaj ka time khatam');
   drawProfile();
 }
@@ -1317,12 +1374,18 @@ function setNstat(t){ $('nstat').textContent = 'Notification: ' + t; }
 function ensureNotif(){
   if(!LN){ setNstat('sirf APK mein chalega'); return; }
   LN.checkPermissions().then(function(r){
-    if(r.display === 'granted'){ setNstat('ON'); exactCheck(); applyRep(); return; }
+    if(r.display === 'granted'){ setNstat('ON'); exactCheck(); applyAll(); return; }
     return LN.requestPermissions().then(function(p){
-      if(p.display === 'granted'){ setNstat('ON'); exactCheck(); applyRep(); }
+      if(p.display === 'granted'){ setNstat('ON'); exactCheck(); applyAll(); }
       else { setNstat('band hai (neeche button dabao)'); }
     });
   }).catch(function(e){ setNstat('error: ' + e.message); });
+}
+async function applyAll(){
+  await morSchedule();
+  await caAll();
+  await applyRep();
+  drawAlarm();
 }
 function exactCheck(){
   try{
@@ -1357,32 +1420,22 @@ async function delRem(id){
     drawRem(); say('reminder delete ho gaya');
   }catch(e){ say('delete error: ' + e.message); }
 }
-/* ek reminder schedule karne ka common function (form aur command dono ke liye) */
-async function addReminder(title, when){
-  if(!LN) return 'Plugin nahi mila (APK mein chalao)';
-  var id = Math.floor(Date.now() % 2000000000);
-  try{
-    await LN.schedule({notifications:[{
-      id:id, title:'KR Creator Studio', body:title, channelId:CH,
-      schedule:{at:when, allowWhileIdle:true}
-    }]});
-    var a = load('rem'); a.push({id:id, title:title, time:when.getTime()}); save('rem', a);
-    drawRem(); drawDash();
-    return 'Reminder laga diya: ' + when.toLocaleString() + ' - ' + title;
-  }catch(e){
-    return 'Reminder error: ' + e.message + ' (More mein Notification allow karo)';
-  }
-}
 $('set').onclick = async function(){
-  var title = $('title').value.trim();
-  var w = $('when').value;
+  if(!LN){ say('plugin nahi mila (APK mein chalao)'); return; }
+  var title = $('title').value.trim(), w = $('when').value;
   if(!title){ say('pehle title likho'); return; }
   if(!w){ say('pehle date aur time chuno'); return; }
   var t = new Date(w);
   if(t.getTime() <= Date.now()){ say('time aage ka chuno'); return; }
-  var r = await addReminder(title, t);
-  say(r);
-  if(r.indexOf('laga diya') > 0) $('title').value = '';
+  var id = Math.floor(Date.now() % 2000000000);
+  try{
+    await LN.schedule({notifications:[{
+      id:id, title:'KR Creator Studio', body:title, channelId:CH,
+      schedule:{at:t, allowWhileIdle:true}
+    }]});
+    var a = load('rem'); a.push({id:id, title:title, time:t.getTime()}); save('rem', a);
+    drawRem(); say('reminder set ho gaya: ' + t.toLocaleString());
+  }catch(e){ say('set error: ' + e.message + ' (upar Notification allow karo dabao)'); }
 };
 
 /* ---------- app wapas aaye to vada / PIN check ---------- */
@@ -1396,6 +1449,8 @@ document.addEventListener('visibilitychange', function(){
 });
 
 /* ---------- start ---------- */
+$('sdate').value = today();
+$('ldate').value = today();
 applySettings();
 show(loadSet().start || 'dash', 0);
 if(localStorage.getItem('introSeen')){
@@ -1406,4 +1461,4 @@ if(localStorage.getItem('introSeen')){
 }
 </script>
 </body>
-  </html>
+        </html>
