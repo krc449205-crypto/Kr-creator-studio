@@ -40,7 +40,24 @@ jobs:
           s = s.replace('<application', perm + '<application', 1)
           open(p, 'w').write(s)
           EOF
-
+      - name: Make 1 second alarm sound
+        run: |
+          mkdir -p android/app/src/main/res/raw
+          python3 - <<'EOF'
+          import math, struct, wave
+          rate = 44100
+          frames = bytearray()
+          n = int(rate * 1.0)
+          for i in range(n):
+              t = i / rate
+              f = 1000 if (int(t * 8) % 2 == 0) else 1400
+              env = min(1.0, t * 40, (1.0 - t) * 15)
+              v = int(32767 * 0.8 * env * math.sin(2 * math.pi * f * t))
+              frames += struct.pack('<h', v)
+          w = wave.open('android/app/src/main/res/raw/alarm_beep.wav', 'wb')
+          w.setnchannels(1); w.setsampwidth(2); w.setframerate(rate)
+          w.writeframes(bytes(frames)); w.close()
+          EOF
       - name: Make arrow app icon from code
         run: |
           rm -rf android/app/src/main/res/mipmap-anydpi-v26
