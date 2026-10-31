@@ -174,7 +174,18 @@
   .wmsg{color:#fca5a5;font-size:13px;min-height:18px;margin-top:6px}
   #wname{text-align:center}
 
-  .gear{position:fixed}
+  .gear{position:fixed}  .spin-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:900px;z-index:2;pointer-events:none}
+  .spin{width:280px;height:280px;position:relative;transform-style:preserve-3d;animation:spinY 9s linear infinite}
+  @keyframes spinY{from{transform:rotateY(0deg) rotateX(14deg)}to{transform:rotateY(360deg) rotateX(14deg)}}
+  .spin svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 6px rgba(103,232,249,.85))}
+  .spin .web{transform-box:view-box;transform-origin:50% 50%;animation:spinZ 14s linear infinite reverse}
+  @keyframes spinZ{to{transform:rotate(360deg)}}
+  .spin .ring{fill:none;stroke:url(#spinG);stroke-width:1;opacity:.85}
+  .spin .spoke{stroke:#a7ecff;stroke-width:.6;opacity:.55}
+  .spin .leg{fill:none;stroke:url(#spinG);stroke-width:2.2;stroke-linecap:round;animation:legPulse 2.4s ease-in-out infinite}
+  @keyframes legPulse{0%,100%{opacity:.45}50%{opacity:1}}
+  .spin .dot{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#e6fbff;box-shadow:0 0 8px #67e8f9,0 0 14px #a855f7;animation:orbit 6s linear infinite}
+  @keyframes orbit{from{transform:rotate(var(--a)) translateX(90px);opacity:0}15%{opacity:1}to{transform:rotate(calc(var(--a) + 360deg)) translateX(150px);opacity:0}}
 </style>
 </head>
 <body>
@@ -227,13 +238,7 @@
 <div id="splash">
   <div class="water"></div>
   <button id="skip" class="skip">Skip</button>
-  <div class="ic" style="--x:-120px;--y:-170px;animation-delay:0s">🎯</div>
-  <div class="ic" style="--x:130px;--y:-150px;animation-delay:.3s">📈</div>
-  <div class="ic" style="--x:-140px;--y:120px;animation-delay:.6s">🎬</div>
-  <div class="ic" style="--x:120px;--y:140px;animation-delay:.9s">🔔</div>
-  <div class="pre">Creator ka kaam bikhra hua hai</div>
-  <div class="center"><div class="logo">KR</div></div>
-  <div class="tag">Goals. Subs. Plan. Reminders. Ek jagah.</div>
+  <div class="spin-wrap"><div class="spin" id="spin"></div></div>
 </div>
 
 <div id="welcome">
@@ -723,7 +728,46 @@ function endSwipe(){
 }
 document.addEventListener('touchend', endSwipe, {passive:true});
 document.addEventListener('touchcancel', endSwipe, {passive:true});
-
+/* ---------- spider spinner (intro) ---------- */
+(function buildSpider(){
+  var el = document.getElementById('spin');
+  if(!el) return;
+  var R = [30, 55, 80, 105], s = '', i, k, a, pts;
+  s += '<svg viewBox="-120 -120 240 240"><defs><linearGradient id="spinG" x1="0" y1="0" x2="1" y2="1">' +
+       '<stop offset="0" stop-color="#eafcff"/><stop offset=".5" stop-color="#67e8f9"/><stop offset="1" stop-color="#a855f7"/>' +
+       '</linearGradient></defs><g class="web">';
+  for(k = 0; k < R.length; k++){
+    pts = [];
+    for(i = 0; i < 8; i++){
+      a = Math.PI / 4 * i + (k % 2 ? Math.PI / 8 : 0);
+      pts.push((R[k] * Math.cos(a)).toFixed(1) + ',' + (R[k] * Math.sin(a)).toFixed(1));
+    }
+    s += '<polygon class="ring" points="' + pts.join(' ') + '"/>';
+  }
+  for(i = 0; i < 8; i++){
+    a = Math.PI / 4 * i;
+    s += '<line class="spoke" x1="0" y1="0" x2="' + (105 * Math.cos(a)).toFixed(1) + '" y2="' + (105 * Math.sin(a)).toFixed(1) + '"/>';
+  }
+  s += '</g><g>';
+  for(i = 0; i < 8; i++){
+    a = Math.PI / 4 * i + Math.PI / 8;
+    var x1 = 28 * Math.cos(a), y1 = 28 * Math.sin(a);
+    var cx = 78 * Math.cos(a + 0.35), cy = 78 * Math.sin(a + 0.35);
+    var x2 = 116 * Math.cos(a), y2 = 116 * Math.sin(a);
+    s += '<path class="leg" style="animation-delay:' + (i * 0.15).toFixed(2) + 's" d="M' +
+         x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Q' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ' +
+         x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/>';
+  }
+  s += '</g></svg>';
+  el.innerHTML = s;
+  for(i = 0; i < 14; i++){
+    var d = document.createElement('div');
+    d.className = 'dot';
+    d.style.setProperty('--a', (i * 360 / 14) + 'deg');
+    d.style.animationDelay = (-i * 0.42).toFixed(2) + 's';
+    el.appendChild(d);
+  }
+})();
 /* ---------- shuru ka flow: naam > vada > PIN > app ---------- */
 function flow(){
   if(!loadSet().name){ $('welcome').style.display = 'flex'; $('wname').focus(); return; }
