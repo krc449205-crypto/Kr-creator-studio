@@ -940,7 +940,7 @@ $('aiKeyDel').onclick = function(){
 };
 
 /* ---------- AI assistant ---------- */
-var AI_MODEL = 'gemini-2.5-flash';
+var AI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
 var aiKind = 'script';
 var AI_LANG = 'Jawab usi bhasha mein do jis mein topic likha gaya hai: Hindi ya Hinglish mein likha ho to Hindi/Hinglish mein, English mein likha ho to English mein. ';
 var AI_PROMPT = {
@@ -966,7 +966,6 @@ document.querySelectorAll('[data-ai]').forEach(function(b){
 function aiErrText(status){
   if(status === 400 || status === 403) return 'Key galat hai ya band hai. Settings mein naayi key daalo.';
   if(status === 429) return 'Aaj ki limit khatam ho gayi. Kal phir try karo.';
-  if(status === 404) return 'AI model nahi mila. App ko update karna padega.';
   return 'Kuch galat hua (code ' + status + '). Dobara try karo.';
 }
 async function aiRun(){
@@ -978,21 +977,27 @@ async function aiRun(){
   $('aiGo').disabled = true;
   aiSay('Soch raha hoon...');
   $('aiCard').style.display = 'none';
+  var lastCode = 0;
   try{
-    var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + AI_MODEL + ':generateContent?key=' + encodeURIComponent(key);
-    var r = await fetch(url, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({contents: [{parts: [{text: AI_PROMPT[aiKind](topic)}]}]})
-    });
-    if(!r.ok){ aiSay(aiErrText(r.status)); return; }
-    var j = await r.json();
-    var parts = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [];
-    var text = parts.map(function(p){ return p.text || ''; }).join('').trim();
-    if(!text){ aiSay('Jawab khali aaya. Topic badal kar dobara try karo.'); return; }
-    $('aiOut').textContent = text;
-    $('aiCard').style.display = 'block';
-    aiSay('Ho gaya.');
+    for(var i = 0; i < AI_MODELS.length; i++){
+      var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + AI_MODELS[i] + ':generateContent?key=' + encodeURIComponent(key);
+      var r = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({contents: [{parts: [{text: AI_PROMPT[aiKind](topic)}]}]})
+      });
+      if(r.status === 404){ lastCode = 404; continue; }
+      if(!r.ok){ aiSay(aiErrText(r.status)); return; }
+      var j = await r.json();
+      var parts = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [];
+      var text = parts.map(function(p){ return p.text || ''; }).join('').trim();
+      if(!text){ aiSay('Jawab khali aaya. Topic badal kar dobara try karo.'); return; }
+      $('aiOut').textContent = text;
+      $('aiCard').style.display = 'block';
+      aiSay('Ho gaya.');
+      return;
+    }
+    aiSay(lastCode === 404 ? 'Koi AI model nahi chala. Thodi der baad try karo.' : 'Kuch galat hua. Dobara try karo.');
   }catch(e){
     aiSay('Net ya server ka problem hai. Dobara try karo.');
   }finally{
