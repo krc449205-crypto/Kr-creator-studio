@@ -174,18 +174,19 @@
   .wmsg{color:#fca5a5;font-size:13px;min-height:18px;margin-top:6px}
   #wname{text-align:center}
 
-  .gear{position:fixed}  .spin-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:900px;z-index:2;pointer-events:none}
-  .spin{width:280px;height:280px;position:relative;transform-style:preserve-3d;animation:spinY 9s linear infinite}
-  @keyframes spinY{from{transform:rotateY(0deg) rotateX(14deg)}to{transform:rotateY(360deg) rotateX(14deg)}}
-  .spin svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 6px rgba(103,232,249,.85))}
-  .spin .web{transform-box:view-box;transform-origin:50% 50%;animation:spinZ 14s linear infinite reverse}
-  @keyframes spinZ{to{transform:rotate(360deg)}}
-  .spin .ring{fill:none;stroke:url(#spinG);stroke-width:1;opacity:.85}
-  .spin .spoke{stroke:#a7ecff;stroke-width:.6;opacity:.55}
-  .spin .leg{fill:none;stroke:url(#spinG);stroke-width:2.2;stroke-linecap:round;animation:legPulse 2.4s ease-in-out infinite}
-  @keyframes legPulse{0%,100%{opacity:.45}50%{opacity:1}}
-  .spin .dot{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#e6fbff;box-shadow:0 0 8px #67e8f9,0 0 14px #a855f7;animation:orbit 6s linear infinite}
-  @keyframes orbit{from{transform:rotate(var(--a)) translateX(90px);opacity:0}15%{opacity:1}to{transform:rotate(calc(var(--a) + 360deg)) translateX(150px);opacity:0}}
+  .gear{position:fixed}
+#splash{background:#02050d;overflow:hidden}
+.nightbg{position:absolute;inset:0;width:100%;height:100%;opacity:0;z-index:0;animation:fadeIn 2s ease forwards}
+@keyframes fadeIn{to{opacity:1}}
+.climber{position:absolute;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#fffbe6;box-shadow:0 0 12px #fff;top:82%;opacity:0;z-index:1;animation:climb 3.2s ease-in-out .4s forwards}
+@keyframes climb{0%{opacity:1;top:82%}100%{opacity:1;top:28%}}
+.baaz{position:absolute;top:30%;right:-160px;width:120px;opacity:0;z-index:2;animation:fly 3s linear 6.2s forwards}
+@keyframes fly{0%{opacity:.85}100%{transform:translateX(-560px);opacity:0}}
+.intro-txt{position:absolute;left:0;right:0;top:56%;text-align:center;z-index:3;opacity:0;animation:fadeIn .8s ease 3.6s forwards}
+.intro-txt .ln{width:0;height:2px;margin:0 auto 14px;background:linear-gradient(90deg,transparent,#67e8f9,transparent);animation:lineGrow .9s ease 3.4s forwards}
+@keyframes lineGrow{to{width:70%}}
+.big{font-family:'Impact','Arial Black',sans-serif;font-size:26px;font-weight:900;letter-spacing:1px;color:#fff;text-transform:uppercase;text-shadow:0 0 12px #67e8f9,0 0 26px #a855f7}
+.nm{margin-top:12px;font-family:'Impact','Arial Black',sans-serif;font-size:38px;font-weight:900;color:#f3d77a;text-shadow:0 0 14px #f3d77a;opacity:0;animation:fadeIn .8s ease 4.4s forwards}
 </style>
 </head>
 <body>
@@ -236,9 +237,25 @@
 </div>
 
 <div id="splash">
-  <div class="water"></div>
+  <svg class="nightbg" viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <radialGradient id="moonG"><stop offset="0" stop-color="#fffbe6"/><stop offset=".6" stop-color="#fde68a" stop-opacity=".9"/><stop offset="1" stop-color="#fde68a" stop-opacity="0"/></radialGradient>
+      <linearGradient id="riverG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#67e8f9" stop-opacity=".9"/><stop offset="1" stop-color="#1e3a8a" stop-opacity=".6"/></linearGradient>
+    </defs>
+    <circle cx="300" cy="120" r="90" fill="url(#moonG)"/>
+    <circle cx="300" cy="120" r="34" fill="#fffbe6"/>
+    <polygon points="0,800 0,430 70,300 130,380 200,190 280,360 340,270 400,380 400,800" fill="#0b1a2e"/>
+    <polygon points="0,800 0,520 90,430 160,500 230,400 300,480 400,420 400,800" fill="#071221"/>
+    <path d="M200 800 Q170 700 230 620 T190 500 T240 430" fill="none" stroke="url(#riverG)" stroke-width="10" stroke-linecap="round"/>
+  </svg>
+  <div class="climber"></div>
+  <svg class="baaz" viewBox="0 0 120 60"><path d="M0 30 Q30 5 60 30 Q90 5 120 30 Q90 20 60 45 Q30 20 0 30Z" fill="#e2e8f0"/></svg>
+  <div class="intro-txt">
+    <div class="ln"></div>
+    <div class="big">Tum big YouTuber banoge</div>
+    <div class="nm" id="iName"></div>
+  </div>
   <button id="skip" class="skip">Skip</button>
-  <div class="spin-wrap"><div class="spin" id="spin"></div></div>
 </div>
 
 <div id="welcome">
@@ -728,46 +745,15 @@ function endSwipe(){
 }
 document.addEventListener('touchend', endSwipe, {passive:true});
 document.addEventListener('touchcancel', endSwipe, {passive:true});
-/* ---------- spider spinner (intro) ---------- */
-(function buildSpider(){
-  var el = document.getElementById('spin');
-  if(!el) return;
-  var R = [30, 55, 80, 105], s = '', i, k, a, pts;
-  s += '<svg viewBox="-120 -120 240 240"><defs><linearGradient id="spinG" x1="0" y1="0" x2="1" y2="1">' +
-       '<stop offset="0" stop-color="#eafcff"/><stop offset=".5" stop-color="#67e8f9"/><stop offset="1" stop-color="#a855f7"/>' +
-       '</linearGradient></defs><g class="web">';
-  for(k = 0; k < R.length; k++){
-    pts = [];
-    for(i = 0; i < 8; i++){
-      a = Math.PI / 4 * i + (k % 2 ? Math.PI / 8 : 0);
-      pts.push((R[k] * Math.cos(a)).toFixed(1) + ',' + (R[k] * Math.sin(a)).toFixed(1));
-    }
-    s += '<polygon class="ring" points="' + pts.join(' ') + '"/>';
-  }
-  for(i = 0; i < 8; i++){
-    a = Math.PI / 4 * i;
-    s += '<line class="spoke" x1="0" y1="0" x2="' + (105 * Math.cos(a)).toFixed(1) + '" y2="' + (105 * Math.sin(a)).toFixed(1) + '"/>';
-  }
-  s += '</g><g>';
-  for(i = 0; i < 8; i++){
-    a = Math.PI / 4 * i + Math.PI / 8;
-    var x1 = 28 * Math.cos(a), y1 = 28 * Math.sin(a);
-    var cx = 78 * Math.cos(a + 0.35), cy = 78 * Math.sin(a + 0.35);
-    var x2 = 116 * Math.cos(a), y2 = 116 * Math.sin(a);
-    s += '<path class="leg" style="animation-delay:' + (i * 0.15).toFixed(2) + 's" d="M' +
-         x1.toFixed(1) + ' ' + y1.toFixed(1) + ' Q' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ' +
-         x2.toFixed(1) + ' ' + y2.toFixed(1) + '"/>';
-  }
-  s += '</g></svg>';
-  el.innerHTML = s;
-  for(i = 0; i < 14; i++){
-    var d = document.createElement('div');
-    d.className = 'dot';
-    d.style.setProperty('--a', (i * 360 / 14) + 'deg');
-    d.style.animationDelay = (-i * 0.42).toFixed(2) + 's';
-    el.appendChild(d);
-  }
+
+/* ---------- intro: naam aur auto-end ---------- */
+(function introScript(){
+  var st = loadSet();
+  var e = document.getElementById('iName');
+  if(e) e.textContent = (st && st.name) ? st.name : 'Creator';
+  setTimeout(function(){ endIntro(); }, 8500);
 })();
+
 /* ---------- shuru ka flow: naam > vada > PIN > app ---------- */
 function flow(){
   if(!loadSet().name){ $('welcome').style.display = 'flex'; $('wname').focus(); return; }
@@ -1410,8 +1396,8 @@ function drawDash(){
 
 /* ---------- reminders ---------- */
 var LN = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications;
-var CH = 'krremind2';
-if(LN){ LN.createChannel({id:CH, name:'KR Reminders', importance:5, visibility:1, vibration:true}).catch(function(){}); }
+var CH = 'kralarm1';
+if(LN){ LN.createChannel({id:CH, name:'KR Alarm', importance:5, visibility:1, vibration:true, sound:'alarm_beep'}).catch(function(){}); }
 function say(t){ $('status').textContent = 'Status: ' + t; }
 function setNstat(t){ $('nstat').textContent = 'Notification: ' + t; }
 
@@ -1505,4 +1491,4 @@ if(localStorage.getItem('introSeen')){
 }
 </script>
 </body>
-        </html>
+                                                                                                                                                                                  </html>
