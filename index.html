@@ -104,8 +104,18 @@
   .aigrid button{margin:4px 0;font-size:13px;padding:11px 8px}
   .aiout{white-space:pre-wrap;word-break:break-word;color:#eafcff;font-size:15px;line-height:1.5;margin-bottom:8px}
 
-  .yt{font-size:13px;color:#eafcff;line-height:1.5;word-break:break-word}
-  .yt b{color:#f3d77a}
+  /* YouTube (lal theme) */
+  .ytbox{border-color:rgba(255,50,50,.85);box-shadow:0 0 0 1px rgba(255,50,50,.14),0 10px 24px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,80,80,.25)}
+  .ytbox h3{color:#ff6b6b}
+  .ytbox input{border-color:rgba(255,70,70,.5);background:#120708}
+  .ytbox input:focus{border-color:#ff6b6b;box-shadow:0 0 0 3px rgba(255,60,60,.2)}
+  button.ytbtn{background:linear-gradient(90deg,#8b0000,#ff2d2d 50%,#ff8a8a 100%);color:#fff;box-shadow:0 6px 18px rgba(255,0,0,.28),inset 0 1px 0 rgba(255,255,255,.3)}
+  button.ytbtn::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
+  button.ytghost{background:#120708;color:#ff8a8a;border:1px solid rgba(255,80,80,.7);box-shadow:none}
+  button.ytghost::after{display:none}
+  .ytc{font-size:13px;color:#ffe9e9;line-height:1.5;word-break:break-word;border-color:rgba(255,60,60,.6)}
+  .ytc b{color:#ff8a8a}
+  .ytc div{margin-top:2px}
 
   .nav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;background:#05070a;border-top:1px solid rgba(212,175,55,.6)}
   .nav button{flex:1;width:auto;margin:0;border-radius:0;padding:12px 0 14px;font-size:10px;font-weight:600;background:none;color:var(--mut);box-shadow:none}
@@ -113,6 +123,15 @@
   .nav button.on{color:#f3d77a;text-shadow:0 0 10px rgba(243,215,122,.6)}
   .nav button.on::before{content:"";position:absolute;top:0;left:30%;width:40%;height:3px;border-radius:0 0 4px 4px;background:linear-gradient(90deg,#b8902a,#f3d77a,#fff6d6)}
   .st{margin:10px 0;color:#f3d77a;font-size:14px}
+
+  /* analysis overlay: YouTube khulne wali animation */
+  #anaOv{position:fixed;inset:0;z-index:175;display:none;align-items:center;justify-content:center;background:rgba(3,3,5,.97);padding:24px}
+  .ovbox{text-align:center;width:100%;max-width:340px}
+  .ovlogo{width:120px;height:84px;margin:0 auto 24px;border-radius:22px;background:#ff1f1f;color:#fff;font-size:46px;line-height:84px;box-shadow:0 0 30px rgba(255,0,0,.6);animation:ovpulse 1s ease-in-out infinite}
+  @keyframes ovpulse{50%{transform:scale(1.07);box-shadow:0 0 46px rgba(255,0,0,.9)}}
+  .ovtxt{color:#ffd1d1;font-size:16px;letter-spacing:.4px;margin-bottom:18px;min-height:24px}
+  .ovbar{height:8px;background:rgba(255,80,80,.2);border-radius:8px;overflow:hidden}
+  #ovBar{height:100%;width:0;background:linear-gradient(90deg,#ff1f1f,#ff8a8a);transition:width .6s ease}
 
   #lock{position:fixed;inset:0;z-index:150;display:none;align-items:center;justify-content:center;padding:24px;--kc:#f3d77a;background:#030305;overflow:hidden}
   #lock .water{position:absolute}
@@ -417,6 +436,29 @@
 
 <div id="t-ai" class="tab">
   <h2>AI Assistant</h2>
+  <div id="aiSt" class="st"></div>
+
+  <h3>YouTube channel</h3>
+  <div class="glass ytbox">
+    <div id="ytSt" class="st">Channel abhi save nahi hai</div>
+    <input id="ytKeyIn" type="password" placeholder="YouTube API key paste karo (pehli baar)">
+    <input id="ytHandle" placeholder="Channel handle (jaise @yourname ya youtube link)">
+    <button id="ytSave" class="ytbtn">Channel check karo aur save karo</button>
+    <button id="ytOpen" class="ytbtn">Channel YouTube par kholo</button>
+    <button id="ytDel" class="ytghost">Channel hatao</button>
+    <div id="ytInfo"></div>
+  </div>
+
+  <h3>Growth analysis (grow kyun nahi ho raha)</h3>
+  <div class="glass ytbox">
+    <input id="anaCtr" inputmode="decimal" placeholder="CTR % (YouTube Studio se, optional)">
+    <input id="anaDur" placeholder="Average view duration (jaise 0:45, optional)">
+    <button id="aiAnalyze" class="ytbtn">Mere channel ka analysis karo</button>
+    <div class="st">Pehle YouTube khulega, phir channel ka data aayega, phir galtiyan aur agle 7 din ka plan.</div>
+    <div id="anaFacts" style="display:none"></div>
+  </div>
+
+  <h3>Content generator</h3>
   <div class="glass">
     <div class="st">Script, viral title, thumbnail idea, description ya video idea. Topic Hindi mein likho to jawab Hindi mein, English mein likho to English mein.</div>
     <div class="aigrid">
@@ -428,7 +470,6 @@
     </div>
     <textarea id="aiTopic" placeholder="Topic likho (jaise fitness ke liye 60 second video)"></textarea>
     <button id="aiGo">Banao</button>
-    <div id="aiSt" class="st"></div>
   </div>
   <div id="aiCard" class="card" style="display:none">
     <div id="aiOut" class="aiout"></div>
@@ -493,16 +534,6 @@
     <button id="aiKeyDel" class="ghost">Key hatao</button>
   </div>
 
-  <h3>YouTube channel</h3>
-  <div class="glass">
-    <div id="ytSt" class="st">Channel abhi save nahi hai</div>
-    <input id="ytKeyIn" type="password" placeholder="YouTube API key paste karo (pehli baar)">
-    <input id="ytHandle" placeholder="Channel handle (jaise @yourname ya youtube link)">
-    <button id="ytSave">Channel check karo aur save karo</button>
-    <button id="ytDel" class="ghost">Channel hatao</button>
-    <div id="ytInfo"></div>
-  </div>
-
   <h3>Mera profile</h3>
   <div class="glass">
     <input id="dpFile" type="file" accept="image/*">
@@ -544,6 +575,14 @@
   </div>
 </div>
 
+</div>
+
+<div id="anaOv">
+  <div class="ovbox">
+    <div class="ovlogo">▶</div>
+    <div id="ovTxt" class="ovtxt">YouTube khul raha hai...</div>
+    <div class="ovbar"><div id="ovBar"></div></div>
+  </div>
 </div>
 
 <div class="nav">
@@ -617,7 +656,7 @@ function welcomeVoice(){
   tone(523, 0.3, 0, 0.12); tone(659, 0.3, 0.15, 0.12); tone(784, 0.45, 0.3, 0.12);
 }
 document.addEventListener('click', function(ev){
-  if(ev.target.closest && ev.target.closest('#lock, #promise')) return;
+  if(ev.target.closest && ev.target.closest('#lock, #promise, #anaOv')) return;
   if(ev.target.closest && ev.target.closest('button')){ clickSound(); vib(10); }
 });
 
@@ -926,7 +965,6 @@ function drawSettings(){
   var s = loadSet();
   $('cname').value = s.name || ''; $('cstart').value = s.start || 'dash';
   $('aiKeySt').textContent = localStorage.getItem('aiKey') ? 'Key save hai (phone mein safe hai)' : 'Key abhi save nahi hai';
-  drawYt();
 }
 function applySettings(){
   var s = loadSet();
@@ -953,7 +991,7 @@ $('aiKeyDel').onclick = function(){
   $('aiKeySt').textContent = 'Key hata di gayi';
 };
 
-/* ---------- YouTube channel (koi bhi handle, reset/export mein nahi jaata) ---------- */
+/* ---------- YouTube channel (AI tab mein; reset/export mein nahi jaata) ---------- */
 function ytGetKey(){ return localStorage.getItem('ytKey') || ''; }
 function ytGet(){ try{ return JSON.parse(localStorage.getItem('yt') || 'null') || null; }catch(e){ return null; } }
 function ytSay(t){ $('ytSt').textContent = t; }
@@ -970,6 +1008,12 @@ function ytErrText(status){
   if(status === 429) return 'YouTube ki aaj ki limit khatam ho gayi. Kal phir try karo.';
   return 'YouTube se jawab nahi aaya (code ' + status + '). Dobara try karo.';
 }
+function ytErrMsgOf(e){
+  var m = (e && e.message) || '';
+  if(m === 'nohandle') return 'Ye handle nahi mila. Spelling check karke dobara likho.';
+  if(m.indexOf('http') === 0) return ytErrText(parseInt(m.slice(4), 10));
+  return 'Net ya server ka problem hai. Dobara try karo.';
+}
 function drawYt(){
   var y = ytGet();
   if(!ytGetKey()){ ytSay('YouTube key abhi save nahi hai'); }
@@ -977,18 +1021,63 @@ function drawYt(){
   else { ytSay('Channel save hai: ' + y.title); }
   var box = $('ytInfo'); box.innerHTML = '';
   if(!y) return;
-  var c = document.createElement('div'); c.className = 'card yt';
+  var c = document.createElement('div'); c.className = 'card ytc';
   c.innerHTML = '<b>' + y.title + '</b><br>' +
     'Subscribers: ' + (y.subs == null ? 'hidden' : ytFmtN(y.subs)) + '<br>' +
     'Total videos: ' + ytFmtN(y.videos) + '<br>' +
     'Total views: ' + ytFmtN(y.views);
   box.appendChild(c);
   (y.recent || []).forEach(function(v){
-    var r = document.createElement('div'); r.className = 'card yt';
+    var r = document.createElement('div'); r.className = 'card ytc';
     r.innerHTML = '<b>' + v.title + '</b><br>' + v.date +
       ' | Views: ' + ytFmtN(v.views) + ' | Likes: ' + ytFmtN(v.likes) + ' | Comments: ' + ytFmtN(v.comments);
     box.appendChild(r);
   });
+}
+/* channel ka poora data YouTube se laata hai */
+async function ytFetch(handle, key){
+  var r = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&forHandle=' + encodeURIComponent(handle) + '&key=' + encodeURIComponent(key));
+  if(!r.ok) throw new Error('http' + r.status);
+  var j = await r.json();
+  if(!j.items || !j.items.length) throw new Error('nohandle');
+  var ch = j.items[0];
+  var st = ch.statistics || {};
+  var uploads = ch.contentDetails && ch.contentDetails.relatedPlaylists && ch.contentDetails.relatedPlaylists.uploads;
+  var recent = [];
+  if(uploads){
+    var pr = await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=10&playlistId=' + encodeURIComponent(uploads) + '&key=' + encodeURIComponent(key));
+    if(pr.ok){
+      var pj = await pr.json();
+      var ids = (pj.items || []).map(function(x){ return x.contentDetails.videoId; }).join(',');
+      if(ids){
+        var vr = await fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=' + encodeURIComponent(ids) + '&key=' + encodeURIComponent(key));
+        if(vr.ok){
+          var vj = await vr.json();
+          recent = (vj.items || []).map(function(v){
+            var vs = v.statistics || {};
+            return {
+              id: v.id,
+              title: v.snippet.title,
+              date: (v.snippet.publishedAt || '').slice(0, 10),
+              views: parseInt(vs.viewCount, 10) || 0,
+              likes: parseInt(vs.likeCount, 10) || 0,
+              comments: parseInt(vs.commentCount, 10) || 0
+            };
+          });
+        }
+      }
+    }
+  }
+  return {
+    handle: handle,
+    channelId: ch.id,
+    title: ch.snippet.title,
+    subs: st.hiddenSubscriberCount ? null : (parseInt(st.subscriberCount, 10) || 0),
+    videos: parseInt(st.videoCount, 10) || 0,
+    views: parseInt(st.viewCount, 10) || 0,
+    recent: recent,
+    savedAt: Date.now()
+  };
 }
 async function ytSave(){
   var typedKey = $('ytKeyIn').value.trim();
@@ -1002,64 +1091,256 @@ async function ytSave(){
   $('ytSave').disabled = true;
   ytSay('Channel dhoond raha hoon...');
   try{
-    var r = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,contentDetails&forHandle=' + encodeURIComponent(handle) + '&key=' + encodeURIComponent(key));
-    if(!r.ok){ ytSay(ytErrText(r.status)); return; }
-    var j = await r.json();
-    if(!j.items || !j.items.length){ ytSay('Ye handle nahi mila. Spelling check karke dobara likho.'); return; }
-    var ch = j.items[0];
-    var st = ch.statistics || {};
-    var uploads = ch.contentDetails && ch.contentDetails.relatedPlaylists && ch.contentDetails.relatedPlaylists.uploads;
-    var recent = [];
-    if(uploads){
-      var pr = await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=10&playlistId=' + encodeURIComponent(uploads) + '&key=' + encodeURIComponent(key));
-      if(pr.ok){
-        var pj = await pr.json();
-        var ids = (pj.items || []).map(function(x){ return x.contentDetails.videoId; }).join(',');
-        if(ids){
-          var vr = await fetch('https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=' + encodeURIComponent(ids) + '&key=' + encodeURIComponent(key));
-          if(vr.ok){
-            var vj = await vr.json();
-            recent = (vj.items || []).map(function(v){
-              var vs = v.statistics || {};
-              return {
-                id: v.id,
-                title: v.snippet.title,
-                date: (v.snippet.publishedAt || '').slice(0, 10),
-                views: parseInt(vs.viewCount, 10) || 0,
-                likes: parseInt(vs.likeCount, 10) || 0,
-                comments: parseInt(vs.commentCount, 10) || 0
-              };
-            });
-          }
-        }
-      }
-    }
-    var data = {
-      handle: handle,
-      channelId: ch.id,
-      title: ch.snippet.title,
-      subs: st.hiddenSubscriberCount ? null : (parseInt(st.subscriberCount, 10) || 0),
-      videos: st.videoCount || 0,
-      views: st.viewCount || 0,
-      recent: recent,
-      savedAt: Date.now()
-    };
+    var data = await ytFetch(handle, key);
     localStorage.setItem('yt', JSON.stringify(data));
     $('ytKeyIn').value = ''; $('ytHandle').value = '';
     drawYt();
     ytSay('Channel save ho gaya: ' + data.title);
   }catch(e){
-    ytSay('Net ya server ka problem hai. Dobara try karo.');
+    ytSay(ytErrMsgOf(e));
   }finally{
     $('ytSave').disabled = false;
   }
 }
 $('ytSave').onclick = ytSave;
+$('ytOpen').onclick = function(){
+  var y = ytGet();
+  if(!y){ ytSay('Pehle channel save karo'); return; }
+  try{ window.open('https://www.youtube.com/' + y.handle, '_blank'); }catch(e){}
+};
 $('ytDel').onclick = function(){
   localStorage.removeItem('yt');
   drawYt();
   ytSay('Channel hata diya gaya. Key abhi bhi save hai.');
 };
+
+/* ---------- overlay (YouTube khulne ki animation) ---------- */
+function ovShow(){ $('anaOv').style.display = 'flex'; }
+function ovHide(){ $('anaOv').style.display = 'none'; }
+function ovSet(t, p){ $('ovTxt').textContent = t; $('ovBar').style.width = p + '%'; }
+function ovWait(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+
+/* ---------- channel ke numbers app khud nikaalta hai ---------- */
+function ytFacts(d){
+  var r = d.recent || [];
+  if(!r.length) return null;
+  var n = r.length, sumV = 0, sumL = 0, sumC = 0, sumT = 0;
+  r.forEach(function(v){ sumV += v.views; sumL += v.likes; sumC += v.comments; sumT += (v.title || '').length; });
+  var avg = Math.round(sumV / n);
+  var last = r.slice(0, 5), prev = r.slice(5, 10);
+  var avgLast = Math.round(last.reduce(function(a, v){ return a + v.views; }, 0) / last.length);
+  var pct = null;
+  if(prev.length){
+    var avgPrev = prev.reduce(function(a, v){ return a + v.views; }, 0) / prev.length;
+    if(avgPrev > 0) pct = Math.round((avgLast - avgPrev) * 100 / avgPrev);
+  }
+  var likeRate = sumV ? (sumL * 100 / sumV) : 0;
+  var cmtRate = sumV ? (sumC * 1000 / sumV) : 0;
+  var dates = r.map(function(v){ return Date.parse(v.date); }).filter(function(x){ return !isNaN(x); }).sort(function(a, b){ return b - a; });
+  var gap = null, sinceLast = null;
+  if(dates.length){
+    sinceLast = Math.floor((Date.now() - dates[0]) / 86400000);
+    if(dates.length > 1){
+      var tot = 0;
+      for(var i = 0; i < dates.length - 1; i++) tot += (dates[i] - dates[i + 1]);
+      gap = Math.round(tot / (dates.length - 1) / 86400000);
+    }
+  }
+  var best = r.reduce(function(a, v){ return v.views > a.views ? v : a; }, r[0]);
+  var low = r.filter(function(v){ return v.views < avg * 0.3; }).length;
+  return {n: n, avg: avg, avgLast: avgLast, pct: pct, likeRate: likeRate, cmtRate: cmtRate, gap: gap, sinceLast: sinceLast, titleLen: Math.round(sumT / n), best: best, low: low};
+}
+function showFacts(f){
+  var box = $('anaFacts'); box.innerHTML = ''; box.style.display = 'none';
+  if(!f) return;
+  var c = document.createElement('div'); c.className = 'card ytc';
+  var h = document.createElement('b'); h.textContent = 'Numbers (app ne khud nikaale):'; c.appendChild(h);
+  var lines = [
+    'Last 10 videos ka average views: ' + ytFmtN(f.avg),
+    'Latest 5 ka average: ' + ytFmtN(f.avgLast) + (f.pct !== null ? ' (pichli 5 se ' + (f.pct >= 0 ? '+' : '') + f.pct + '%)' : ''),
+    'Upload ka average gap: ' + (f.gap !== null ? f.gap + ' din' : 'pata nahi'),
+    'Aakhri upload: ' + (f.sinceLast !== null ? f.sinceLast + ' din pehle' : 'pata nahi'),
+    'Like rate: ' + f.likeRate.toFixed(1) + '%',
+    'Comments: ' + f.cmtRate.toFixed(1) + ' per 1000 views',
+    'Average title length: ' + f.titleLen + ' characters',
+    'Kam views wali videos: ' + f.low + ' out of ' + f.n,
+    'Sabse achhi video: ' + f.best.title + ' (' + ytFmtN(f.best.views) + ' views)'
+  ];
+  lines.forEach(function(t){ var d = document.createElement('div'); d.textContent = t; c.appendChild(d); });
+  box.appendChild(c);
+  box.style.display = 'block';
+}
+function ytPrompt(d, f, ctr, dur){
+  var list = (d.recent || []).map(function(v, i){
+    return (i + 1) + '. "' + v.title + '" | ' + v.date + ' | views ' + v.views + ' | likes ' + v.likes + ' | comments ' + v.comments;
+  }).join('\n');
+  var nums = '';
+  if(f){
+    nums = 'App ke nikaale numbers:\n' +
+      '- Last 10 videos ka average views: ' + f.avg + '\n' +
+      '- Latest 5 ka average: ' + f.avgLast + (f.pct !== null ? ' (pichli 5 se ' + (f.pct >= 0 ? '+' : '') + f.pct + '%)' : '') + '\n' +
+      '- Upload ka average gap: ' + (f.gap !== null ? f.gap + ' din' : 'pata nahi') + '\n' +
+      '- Aakhri upload: ' + (f.sinceLast !== null ? f.sinceLast + ' din pehle' : 'pata nahi') + '\n' +
+      '- Like rate: ' + f.likeRate.toFixed(1) + '%\n' +
+      '- Comments: ' + f.cmtRate.toFixed(1) + ' per 1000 views\n' +
+      '- Average title length: ' + f.titleLen + ' characters\n' +
+      '- Kam views wali videos: ' + f.low + ' out of ' + f.n + '\n';
+  }
+  var extra = '';
+  if(ctr) extra += 'CTR (YouTube Studio se, user ne diya): ' + ctr + '%\n';
+  if(dur) extra += 'Average view duration (user ne diya): ' + dur + '\n';
+  if(!extra) extra = 'CTR aur watch time user ne nahi diye. Iske baare mein andaaza mat lagana.\n';
+  return 'Jawab usi bhasha mein do jis mein video titles likhe hain (Hindi/Hinglish titles hain to Hindi/Hinglish, English hain to English).\n' +
+    'Tum ek anubhavi YouTube growth coach ho. Ek creator ka channel grow nahi ho raha, ya bahut slow hai. Uska data neeche hai.\n' +
+    'Channel: ' + d.title + '\n' +
+    'Subscribers: ' + (d.subs == null ? 'hidden' : d.subs) + ', Total videos: ' + d.videos + ', Total views: ' + d.views + '\n' +
+    'Latest videos (naye se purane):\n' + list + '\n\n' +
+    nums + extra + '\n' +
+    'Ye 4 cheezein do, is order mein, chhote aur seedhe shabdon mein:\n' +
+    '1. ASLI KAARAN: grow kyun nahi ho raha. Sabse bada kaaran pehle, 2-3 kaaran, har ek ke saath data ka saboot (kaunsi video ya kaunsa number).\n' +
+    '2. KYA BAND KARNA HAI: 2-3 cheezein jo abhi galat ho rahi hain.\n' +
+    '3. AGLE 7 DIN KA PLAN: day-wise, har din ek saaf kaam.\n' +
+    '4. AGLE 5 VIDEO IDEAS: har ek ka title, thumbnail mein kya dikhana hai, aur ek line mein kyon chalegi (pichli videos se alag ho).\n' +
+    'Jo data mein nahi hai use "data mein nahi hai" likho, andaaza mat lagao.';
+}
+
+/* ---------- AI assistant ---------- */
+var AI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+var aiKind = 'script';
+var AI_LANG = 'Jawab usi bhasha mein do jis mein topic likha gaya hai: Hindi ya Hinglish mein likha ho to Hindi/Hinglish mein, English mein likha ho to English mein. ';
+var AI_PROMPT = {
+  script: function(t){ return AI_LANG + 'YouTube video ki script banao: pehle 10 second ka hook, phir 3-4 main points, aur end mein call to action. Topic: ' + t; },
+  title:  function(t){ return AI_LANG + 'YouTube ke liye 7 viral title banao, har ek ek line mein, numbered. Topic: ' + t; },
+  thumb:  function(t){ return AI_LANG + 'YouTube thumbnail ke 3 idea do, har ek mein text, visual aur colors batao. Topic: ' + t; },
+  desc:   function(t){ return AI_LANG + 'YouTube video description likho: 2-3 line intro, key points, aur 10 hashtags. Topic: ' + t; },
+  idea:   function(t){ return AI_LANG + '5 video ideas do, har ek ke saath ek line mein batao kyon chalega. Topic: ' + t; }
+};
+function aiSay(t){ $('aiSt').textContent = t; }
+function aiMarkKind(){
+  document.querySelectorAll('[data-ai]').forEach(function(b){
+    b.classList.toggle('aisel', b.getAttribute('data-ai') === aiKind);
+  });
+}
+function drawAi(){
+  aiMarkKind();
+  drawYt();
+  if(!$('aiSt').textContent) aiSay(localStorage.getItem('aiKey') ? 'Topic ya analysis chuno.' : 'Pehle Settings mein AI key save karo.');
+}
+document.querySelectorAll('[data-ai]').forEach(function(b){
+  b.onclick = function(){ aiKind = b.getAttribute('data-ai'); aiMarkKind(); };
+});
+function aiErrText(status){
+  if(status === 400 || status === 403) return 'Key galat hai ya band hai. Settings mein naayi key daalo.';
+  if(status === 429) return 'Aaj ki limit khatam ho gayi. Kal phir try karo.';
+  return 'Kuch galat hua (code ' + status + '). Dobara try karo.';
+}
+function aiErrMsg(e){
+  var m = (e && e.message) || '';
+  if(m === 'nokey') return 'Pehle Settings mein AI key save karo.';
+  if(m === 'net') return 'Net nahi hai. Internet on karke try karo.';
+  if(m === 'empty') return 'Jawab khali aaya. Dobara try karo.';
+  if(m.indexOf('http') === 0){
+    var c = parseInt(m.slice(4), 10);
+    if(c === 404) return 'Koi AI model nahi chala. Thodi der baad try karo.';
+    return aiErrText(c);
+  }
+  return 'Net ya server ka problem hai. Dobara try karo.';
+}
+/* ek common function: AI ko prompt bhejta hai, aur model fallback karta hai */
+async function aiCall(prompt){
+  var key = localStorage.getItem('aiKey') || '';
+  if(!key) throw new Error('nokey');
+  if(navigator.onLine === false) throw new Error('net');
+  var lastCode = 404;
+  for(var i = 0; i < AI_MODELS.length; i++){
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + AI_MODELS[i] + ':generateContent?key=' + encodeURIComponent(key);
+    var r = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
+    });
+    if(r.status === 404){ lastCode = 404; continue; }
+    if(!r.ok) throw new Error('http' + r.status);
+    var j = await r.json();
+    var parts = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [];
+    var text = parts.map(function(p){ return p.text || ''; }).join('').trim();
+    if(!text) throw new Error('empty');
+    return text;
+  }
+  throw new Error('http' + lastCode);
+}
+function aiShowOut(text){
+  $('aiOut').textContent = text;
+  $('aiCard').style.display = 'block';
+  aiSay('Ho gaya.');
+}
+function aiBusy(on){
+  $('aiGo').disabled = on;
+  $('aiAnalyze').disabled = on;
+}
+async function aiRun(){
+  if(!localStorage.getItem('aiKey')){ aiSay('Pehle Settings mein AI key save karo.'); return; }
+  var topic = $('aiTopic').value.trim();
+  if(!topic){ aiSay('Pehle topic likho.'); return; }
+  aiBusy(true);
+  aiSay('Soch raha hoon...');
+  $('aiCard').style.display = 'none';
+  try{ aiShowOut(await aiCall(AI_PROMPT[aiKind](topic))); }
+  catch(e){ aiSay(aiErrMsg(e)); }
+  finally{ aiBusy(false); }
+}
+$('aiGo').onclick = aiRun;
+
+/* ---------- growth analysis: YouTube khulega, data aayega, phir AI galtiyan batayega ---------- */
+async function aiAnalyze(){
+  if(!localStorage.getItem('aiKey')){ aiSay('Pehle Settings mein AI key save karo.'); return; }
+  var key = ytGetKey(), y = ytGet();
+  if(!key){ aiSay('Pehle upar YouTube key save karo.'); return; }
+  if(!y){ aiSay('Pehle upar channel handle save karo.'); return; }
+  var ctr = ($('anaCtr').value || '').trim(), dur = ($('anaDur').value || '').trim();
+  aiBusy(true);
+  $('aiCard').style.display = 'none';
+  $('anaFacts').style.display = 'none';
+  aiSay('Analysis shuru ho raha hai...');
+  ovSet('YouTube khul raha hai...', 8);
+  ovShow();
+  try{ window.open('https://www.youtube.com/' + y.handle, '_blank'); }catch(e){}
+  await ovWait(1400);
+
+  ovSet('Channel ka poora data aa raha hai...', 30);
+  var fresh;
+  try{ fresh = await ytFetch(y.handle, key); }
+  catch(e){ ovHide(); aiSay(ytErrMsgOf(e)); aiBusy(false); return; }
+  localStorage.setItem('yt', JSON.stringify(fresh));
+  drawYt();
+
+  ovSet('Videos ka hisaab laga raha hoon...', 55);
+  await ovWait(900);
+  var f = ytFacts(fresh);
+  showFacts(f);
+
+  ovSet('Galtiyan dhoondh raha hoon...', 75);
+  var text;
+  try{ text = await aiCall(ytPrompt(fresh, f, ctr, dur)); }
+  catch(e){ ovHide(); aiSay(aiErrMsg(e)); aiBusy(false); return; }
+
+  ovSet('Ho gaya!', 100);
+  await ovWait(450);
+  ovHide();
+  aiShowOut(text);
+  aiBusy(false);
+}
+$('aiAnalyze').onclick = aiAnalyze;
+
+function aiCopyText(){
+  var t = $('aiOut').textContent;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){ aiSay('Copy ho gaya.'); }).catch(function(){ aiSay('Copy nahi hua, text select karke copy karo.'); });
+  } else {
+    aiSay('Copy nahi hua, text select karke copy karo.');
+  }
+}
+$('aiCopy').onclick = aiCopyText;
 
 /* ---------- 30 minute repeat reminder ---------- */
 var REP_BASE = 100000, REP_MAX = 60;
@@ -1476,81 +1757,6 @@ $('morSave').onclick = async function(){
   $('morSt').textContent = on ? 'Save ho gaya. Goal add karte hi ye band ho jayega.' : 'Band kar diya';
 };
 
-/* ---------- AI assistant ---------- */
-var AI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
-var aiKind = 'script';
-var AI_LANG = 'Jawab usi bhasha mein do jis mein topic likha gaya hai: Hindi ya Hinglish mein likha ho to Hindi/Hinglish mein, English mein likha ho to English mein. ';
-var AI_PROMPT = {
-  script: function(t){ return AI_LANG + 'YouTube video ki script banao: pehle 10 second ka hook, phir 3-4 main points, aur end mein call to action. Topic: ' + t; },
-  title:  function(t){ return AI_LANG + 'YouTube ke liye 7 viral title banao, har ek ek line mein, numbered. Topic: ' + t; },
-  thumb:  function(t){ return AI_LANG + 'YouTube thumbnail ke 3 idea do, har ek mein text, visual aur colors batao. Topic: ' + t; },
-  desc:   function(t){ return AI_LANG + 'YouTube video description likho: 2-3 line intro, key points, aur 10 hashtags. Topic: ' + t; },
-  idea:   function(t){ return AI_LANG + '5 video ideas do, har ek ke saath ek line mein batao kyon chalega. Topic: ' + t; }
-};
-function aiSay(t){ $('aiSt').textContent = t; }
-function aiMarkKind(){
-  document.querySelectorAll('[data-ai]').forEach(function(b){
-    b.classList.toggle('aisel', b.getAttribute('data-ai') === aiKind);
-  });
-}
-function drawAi(){
-  aiMarkKind();
-  aiSay(localStorage.getItem('aiKey') ? 'Topic likho, option chuno, phir Banao dabao.' : 'Pehle Settings mein AI key save karo.');
-}
-document.querySelectorAll('[data-ai]').forEach(function(b){
-  b.onclick = function(){ aiKind = b.getAttribute('data-ai'); aiMarkKind(); };
-});
-function aiErrText(status){
-  if(status === 400 || status === 403) return 'Key galat hai ya band hai. Settings mein naayi key daalo.';
-  if(status === 429) return 'Aaj ki limit khatam ho gayi. Kal phir try karo.';
-  return 'Kuch galat hua (code ' + status + '). Dobara try karo.';
-}
-async function aiRun(){
-  var key = localStorage.getItem('aiKey') || '';
-  if(!key){ aiSay('Pehle Settings mein AI key save karo.'); return; }
-  var topic = $('aiTopic').value.trim();
-  if(!topic){ aiSay('Pehle topic likho.'); return; }
-  if(navigator.onLine === false){ aiSay('Net nahi hai. Internet on karke try karo.'); return; }
-  $('aiGo').disabled = true;
-  aiSay('Soch raha hoon...');
-  $('aiCard').style.display = 'none';
-  var lastCode = 0;
-  try{
-    for(var i = 0; i < AI_MODELS.length; i++){
-      var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + AI_MODELS[i] + ':generateContent?key=' + encodeURIComponent(key);
-      var r = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({contents: [{parts: [{text: AI_PROMPT[aiKind](topic)}]}]})
-      });
-      if(r.status === 404){ lastCode = 404; continue; }
-      if(!r.ok){ aiSay(aiErrText(r.status)); return; }
-      var j = await r.json();
-      var parts = (j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts) || [];
-      var text = parts.map(function(p){ return p.text || ''; }).join('').trim();
-      if(!text){ aiSay('Jawab khali aaya. Topic badal kar dobara try karo.'); return; }
-      $('aiOut').textContent = text;
-      $('aiCard').style.display = 'block';
-      aiSay('Ho gaya.');
-      return;
-    }
-    aiSay(lastCode === 404 ? 'Koi AI model nahi chala. Thodi der baad try karo.' : 'Kuch galat hua. Dobara try karo.');
-  }catch(e){
-    aiSay('Net ya server ka problem hai. Dobara try karo.');
-  }finally{
-    $('aiGo').disabled = false;
-  }
-}
-$('aiGo').onclick = aiRun;
-$('aiCopy').onclick = function(){
-  var t = $('aiOut').textContent;
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(t).then(function(){ aiSay('Copy ho gaya.'); }).catch(function(){ aiSay('Copy nahi hua, text select karke copy karo.'); });
-  } else {
-    aiSay('Copy nahi hua, text select karke copy karo.');
-  }
-};
-
 /* ---------- backup (import PIN ke saath) ---------- */
 $('expb').onclick = function(){
   var o = {};
@@ -1747,4 +1953,4 @@ if(localStorage.getItem('introSeen')){
 }
 </script>
 </body>
-        </html>
+  </html>
